@@ -62,7 +62,7 @@ const FOOD_MENU = [
 async function apiPost(url, payload) {
   try {
     // Вставляем твой реальный адрес бэкенда на Railway
-    const BACKEND_BASE_URL = 'grand-villa-bot-production.up.railway.app';
+    const BACKEND_BASE_URL = 'https://grand-villa-bot-production.up.railway.app';
     
     const res = await fetch(`${BACKEND_BASE_URL}${url}`, {
       method: 'POST',
