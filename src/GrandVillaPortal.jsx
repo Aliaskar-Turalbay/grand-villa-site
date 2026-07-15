@@ -1373,14 +1373,39 @@ function GlobalStyles() {
         margin: 0;
       }
 
-      /* ---------- Booking Form ---------- */
-      .gv-field select {
-        width: 100%;
-        background-color: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(184, 135, 47, 0.4);
-        padding: 0.7rem 0.85rem;
-        color: inherit;
-        border-radius: 2px;
+      /* ---------- ВОССТАНОВЛЕННЫЕ СТИЛИ ДЛЯ БРОНИРОВАНИЯ (Booking Form) ---------- */
+      .gv-booking-grid {
+        max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2.5rem;
+      }
+      @media (min-width: 900px) { .gv-booking-grid { grid-template-columns: 1.1fr 0.9fr; align-items: center; } }
+      
+      .gv-form { display: flex; flex-direction: column; gap: 1rem; max-width: 480px; }
+      
+      .gv-field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: #D9D2C4; flex: 1; }
+      .gv-section-cream .gv-field { color: var(--charcoal-soft); }
+      
+      .gv-field input, .gv-field select, .gv-field textarea {
+        padding: 0.7rem 0.85rem; border: 1px solid rgba(184,135,47,0.4); background: rgba(255,255,255,0.05);
+        color: #fff; font-family: inherit; font-size: 0.95rem; border-radius: 2px; width: 100%;
+      }
+      .gv-section-cream .gv-field input, .gv-section-cream .gv-field select, .gv-section-cream .gv-field textarea {
+        background: var(--cream); color: var(--charcoal);
+      }
+      .gv-field input:focus, .gv-field select:focus, .gv-field textarea:focus {
+        outline: 2px solid var(--gold); outline-offset: 1px;
+      }
+      .gv-field-row { display: flex; gap: 1rem; width: 100%; }
+      .gv-field-row .gv-field { min-width: 0; }
+
+      .gv-field select option {
+        background: var(--charcoal);
+        color: #fff;
+      }
+
+      .gv-form-error {
+        display: flex; align-items: flex-start; gap: 0.5rem; background: rgba(200,60,60,0.12);
+        border: 1px solid rgba(200,60,60,0.4); color: #E29999; padding: 0.7rem 0.9rem;
+        font-size: 0.85rem; border-radius: 2px;
       }
 
       /* ---------- Booking success styling ---------- */
