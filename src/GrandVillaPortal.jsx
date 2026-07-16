@@ -123,14 +123,31 @@ const FOOD_MENU = [
    API-УТИЛИТА
    ========================================================================= */
 
+const BACKEND_BASE_URL = 'https://grand-villa-bot-production.up.railway.app';
+
 async function apiPost(url, payload) {
   try {
-    const BACKEND_BASE_URL = 'https://grand-villa-bot-production.up.railway.app';
     const res = await fetch(`${BACKEND_BASE_URL}${url}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
+    let data = null;
+    try {
+      data = await res.json();
+    } catch (_) {}
+    if (!res.ok) {
+      return { ok: false, status: res.status, data };
+    }
+    return { ok: true, status: res.status, data };
+  } catch (err) {
+    return { ok: false, status: 0, data: null, networkError: true };
+  }
+}
+
+async function apiGet(url) {
+  try {
+    const res = await fetch(`${BACKEND_BASE_URL}${url}`);
     let data = null;
     try {
       data = await res.json();
@@ -291,10 +308,20 @@ function Hero({ onBookClick }) {
   );
 }
 
-function RoomsGrid({ onSelectRoom }) {
+function RoomsGrid({ onSelectRoom, roomsAvailability }) {
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+
+  // Реальный статус номера: сначала смотрим в данные с backend (roomsAvailability),
+  // если по этому номеру данных ещё нет (бэкенд не ответил / номер не заведён в БД) —
+  // используем захардкоженное значение по умолчанию, чтобы UI не был пустым.
+  const isRoomAvailable = (room) => {
+    if (roomsAvailability && Object.prototype.hasOwnProperty.call(roomsAvailability, room.id)) {
+      return roomsAvailability[room.id];
+    }
+    return room.isAvailable;
+  };
 
   const toggleCategory = (categoryId) => {
     setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
@@ -316,7 +343,8 @@ function RoomsGrid({ onSelectRoom }) {
     else if (room.id.startsWith('4') && ['402', '411'].includes(room.id)) categoryId = 'deluxe';
     else if (room.id.startsWith('4') && ['401', '407', '409'].includes(room.id)) categoryId = 'family';
 
-    onSelectRoom(categoryId);
+    // Передаём и категорию (для формы), и конкретный номер (чтобы забронировать именно его)
+    onSelectRoom({ category: categoryId, roomNumber: room.id });
     const el = document.getElementById('booking-form');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -329,7 +357,7 @@ function RoomsGrid({ onSelectRoom }) {
       <div className="gv-rooms-container">
         {Object.values(ROOMS_DATA).map((category) => {
           const totalRooms = category.rooms.length;
-          const availableRooms = category.rooms.filter(r => r.isAvailable).length;
+          const availableRooms = category.rooms.filter((r) => isRoomAvailable(r)).length;
           const isExpanded = expandedCategory === category.id;
 
           return (
@@ -358,64 +386,67 @@ function RoomsGrid({ onSelectRoom }) {
                   <p className="gv-category-desc">{category.description}</p>
                   
                   <div className="gv-rooms-grid">
-                    {category.rooms.map((room) => (
-                      <div 
-                        key={room.id} 
-                        className={`gv-room-item ${!room.isAvailable ? 'gv-room-unavailable' : ''}`}
-                        onClick={() => room.isAvailable && handleRoomSelect(room)}
-                      >
-                        <div className="gv-room-header">
-                          <span className="gv-room-number">{room.name}</span>
-                          <span className={`gv-room-status ${room.isAvailable ? 'gv-room-available' : 'gv-room-occupied'}`}>
-                            {room.isAvailable ? '🟢 Свободен' : '🔴 Занят'}
-                          </span>
-                        </div>
-                        
-                        <div className="gv-room-details">
-                          <div className="gv-room-detail-item">
-                            <span className="gv-room-detail-label">Этаж:</span>
-                            <span>{room.floor}</span>
+                    {category.rooms.map((room) => {
+                      const available = isRoomAvailable(room);
+                      return (
+                        <div 
+                          key={room.id} 
+                          className={`gv-room-item ${!available ? 'gv-room-unavailable' : ''}`}
+                          onClick={() => available && handleRoomSelect(room)}
+                        >
+                          <div className="gv-room-header">
+                            <span className="gv-room-number">{room.name}</span>
+                            <span className={`gv-room-status ${available ? 'gv-room-available' : 'gv-room-occupied'}`}>
+                              {available ? '🟢 Свободен' : '🔴 Занят'}
+                            </span>
                           </div>
-                          <div className="gv-room-detail-item">
-                            <span className="gv-room-detail-label">Кровать:</span>
-                            <span>{room.bedType}</span>
+                          
+                          <div className="gv-room-details">
+                            <div className="gv-room-detail-item">
+                              <span className="gv-room-detail-label">Этаж:</span>
+                              <span>{room.floor}</span>
+                            </div>
+                            <div className="gv-room-detail-item">
+                              <span className="gv-room-detail-label">Кровать:</span>
+                              <span>{room.bedType}</span>
+                            </div>
+                            <div className="gv-room-detail-item">
+                              <span className="gv-room-detail-label">Гостей:</span>
+                              <span>до {room.capacity}</span>
+                            </div>
+                            <div className="gv-room-detail-item">
+                              <span className="gv-room-detail-label">Площадь:</span>
+                              <span>{room.size}</span>
+                            </div>
+                            <div className="gv-room-detail-item">
+                              <span className="gv-room-detail-label">Вид:</span>
+                              <span>{room.view}</span>
+                            </div>
                           </div>
-                          <div className="gv-room-detail-item">
-                            <span className="gv-room-detail-label">Гостей:</span>
-                            <span>до {room.capacity}</span>
-                          </div>
-                          <div className="gv-room-detail-item">
-                            <span className="gv-room-detail-label">Площадь:</span>
-                            <span>{room.size}</span>
-                          </div>
-                          <div className="gv-room-detail-item">
-                            <span className="gv-room-detail-label">Вид:</span>
-                            <span>{room.view}</span>
-                          </div>
-                        </div>
 
-                        <div className="gv-room-amenities">
-                          {room.amenities.slice(0, 4).map((amenity, idx) => (
-                            <span key={idx} className="gv-amenity-tag">{amenity}</span>
-                          ))}
-                          {room.amenities.length > 4 && (
-                            <span className="gv-amenity-tag gv-amenity-more">+{room.amenities.length - 4}</span>
+                          <div className="gv-room-amenities">
+                            {room.amenities.slice(0, 4).map((amenity, idx) => (
+                              <span key={idx} className="gv-amenity-tag">{amenity}</span>
+                            ))}
+                            {room.amenities.length > 4 && (
+                              <span className="gv-amenity-tag gv-amenity-more">+{room.amenities.length - 4}</span>
+                            )}
+                          </div>
+
+                          {available && (
+                            <button 
+                              className="gv-btn-gold-sm gv-room-book-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleBooking(room);
+                              }}
+                            >
+                              Забронировать
+                            </button>
                           )}
                         </div>
-
-                        {room.isAvailable && (
-                          <button 
-                            className="gv-btn-gold-sm gv-room-book-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleBooking(room);
-                            }}
-                          >
-                            Забронировать
-                          </button>
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -488,24 +519,33 @@ function RoomsGrid({ onSelectRoom }) {
   );
 }
 
-function BookingForm({ selectedRoomId }) {
+function BookingForm({ selectedRoom, onBookingSuccess }) {
   const [form, setForm] = useState({
     name: '',
     phone: '',
-    category: selectedRoomId || 'standard',
+    category: selectedRoom?.category || 'standard',
     checkIn: '',
     checkOut: '',
   });
   const [status, setStatus] = useState('idle'); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState('');
+  // Если гость сам меняет категорию в форме — отвязываемся от конкретного
+  // кликнутого номера (иначе можно случайно забронировать "не тот" номер).
+  const [roomNumberOverridden, setRoomNumberOverridden] = useState(false);
 
   useEffect(() => {
-    if (selectedRoomId) {
-      setForm((f) => ({ ...f, category: selectedRoomId }));
+    if (selectedRoom?.category) {
+      setForm((f) => ({ ...f, category: selectedRoom.category }));
+      setRoomNumberOverridden(false);
     }
-  }, [selectedRoomId]);
+  }, [selectedRoom]);
 
-  const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  const update = (key) => (e) => {
+    if (key === 'category') setRoomNumberOverridden(true);
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+  };
+
+  const targetRoomNumber = !roomNumberOverridden ? selectedRoom?.roomNumber : null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -527,14 +567,22 @@ function BookingForm({ selectedRoomId }) {
       category: form.category,
       check_in: form.checkIn,
       check_out: form.checkOut,
+      room_number: targetRoomNumber || undefined,
     });
 
     if (result.ok) {
       setStatus('success');
+      // Сообщаем наверх, какой именно номер забронирован, чтобы сразу
+      // пометить его "Занят" на сайте — не дожидаясь следующего опроса backend.
+      const bookedRoomNumber = result.data?.room_number || targetRoomNumber;
+      if (bookedRoomNumber && onBookingSuccess) {
+        onBookingSuccess(bookedRoomNumber);
+      }
     } else if (result.status === 409) {
       setStatus('error');
       setErrorMsg(
-        result.data?.message ||
+        result.data?.error ||
+          result.data?.message ||
           'Этот номер уже забронирован на выбранные даты. Попробуйте другие даты или категорию.'
       );
     } else {
@@ -574,6 +622,13 @@ function BookingForm({ selectedRoomId }) {
               <div className="gv-form-error">
                 <AlertCircle size={18} />
                 <span>{errorMsg}</span>
+              </div>
+            )}
+
+            {targetRoomNumber && (
+              <div className="gv-form-notice">
+                <CheckCircle2 size={16} />
+                <span>Вы бронируете номер {targetRoomNumber}</span>
               </div>
             )}
 
@@ -666,13 +721,41 @@ function Footer() {
   );
 }
 
-function LandingPage({ onSelectRoom, selectedRoomId }) {
+function LandingPage({ onSelectRoom, selectedRoom }) {
+  // Реальная занятость номеров из Supabase: { '101': true, '202': false, ... }
+  const [roomsAvailability, setRoomsAvailability] = useState({});
+
+  const loadAvailability = async () => {
+    const result = await apiGet('/api/rooms/availability');
+    if (result.ok && result.data?.rooms) {
+      const map = {};
+      for (const room of result.data.rooms) {
+        map[room.room_number] = room.is_available;
+      }
+      setRoomsAvailability(map);
+    }
+    // Если backend недоступен — просто оставляем предыдущее состояние
+    // (RoomsGrid сам подстрахуется захардкоженным isAvailable для номеров без данных)
+  };
+
+  useEffect(() => {
+    loadAvailability();
+  }, []);
+
+  // Вызывается из BookingForm сразу после успешной брони —
+  // мгновенно помечаем номер занятым, не дожидаясь следующего опроса
+  const handleBookingSuccess = (roomNumber) => {
+    setRoomsAvailability((prev) => ({ ...prev, [roomNumber]: false }));
+    // Плюс подстраховочно перезапрашиваем актуальные данные с backend
+    loadAvailability();
+  };
+
   return (
     <div className="gv-page">
-      <Header onBookClick={() => onSelectRoom(selectedRoomId || 'standard')} />
-      <Hero onBookClick={() => onSelectRoom(selectedRoomId || 'standard')} />
-      <RoomsGrid onSelectRoom={onSelectRoom} />
-      <BookingForm selectedRoomId={selectedRoomId} />
+      <Header onBookClick={() => onSelectRoom({ category: selectedRoom?.category || 'standard', roomNumber: null })} />
+      <Hero onBookClick={() => onSelectRoom({ category: selectedRoom?.category || 'standard', roomNumber: null })} />
+      <RoomsGrid onSelectRoom={onSelectRoom} roomsAvailability={roomsAvailability} />
+      <BookingForm selectedRoom={selectedRoom} onBookingSuccess={handleBookingSuccess} />
       <Footer />
       <WhatsAppWidget />
     </div>
@@ -1408,6 +1491,12 @@ function GlobalStyles() {
         font-size: 0.85rem; border-radius: 2px;
       }
 
+      .gv-form-notice {
+        display: flex; align-items: center; gap: 0.5rem; background: rgba(184,135,47,0.15);
+        border: 1px solid rgba(184,135,47,0.4); color: var(--gold-light); padding: 0.6rem 0.9rem;
+        font-size: 0.85rem; font-weight: 600; border-radius: 2px;
+      }
+
       /* ---------- Booking success styling ---------- */
       .gv-booking-success {
         max-width: 480px; margin: 0 auto; text-align: center; display: flex;
@@ -1565,7 +1654,7 @@ function GlobalStyles() {
 
 export default function GrandVillaPortal() {
   const [route, setRoute] = useState(() => parseRoute(window.location.pathname));
-  const [selectedRoomId, setSelectedRoomId] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(null); // { category, roomNumber } | null
 
   useEffect(() => {
     const onPopState = () => setRoute(parseRoute(window.location.pathname));
@@ -1578,8 +1667,8 @@ export default function GrandVillaPortal() {
     setRoute(parseRoute(path));
   };
 
-  const handleSelectRoom = (roomId) => {
-    setSelectedRoomId(roomId);
+  const handleSelectRoom = (room) => {
+    setSelectedRoom(room);
     const el = document.getElementById('booking-form');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -1590,7 +1679,7 @@ export default function GrandVillaPortal() {
       {route.mode === 'room' ? (
         <RoomScreen roomNumber={route.roomNumber} onExit={() => goTo('/')} />
       ) : (
-        <LandingPage onSelectRoom={handleSelectRoom} selectedRoomId={selectedRoomId} />
+        <LandingPage onSelectRoom={handleSelectRoom} selectedRoom={selectedRoom} />
       )}
       <DemoSwitcher current={route} goTo={goTo} />
     </div>
