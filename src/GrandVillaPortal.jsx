@@ -9,8 +9,8 @@ import {
    КОНФИГУРАЦИЯ И ДАННЫЕ
    ========================================================================= */
 
-const WHATSAPP_NUMBER = '77001234567'; // TODO: заменить на реальный номер Алии
-const HOTEL_NAME = 'Гранд Вилла';
+const WHATSAPP_NUMBER = '77770207773'; // TODO: заменить на реальный номер Алии
+const HOTEL_NAME = 'Grand Villa';
 const HOTEL_CITY = 'Туркестан';
 
 const ROOMS_DATA = {
@@ -21,35 +21,35 @@ const ROOMS_DATA = {
     icon: '🛏️',
     rooms: [
       // 1 этаж
-      { id: '101', name: 'Номер 101', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
-      { id: '102', name: 'Номер 102', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
-      { id: '103', name: 'Номер 103', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
-      { id: '104', name: 'Номер 104', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', view: 'Улица Яссауи', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Раздельные кровати'] },
-      { id: '105', name: 'Номер 105', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
-      { id: '106', name: 'Номер 106', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
-      { id: '107', name: 'Номер 107', floor: 1, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '108', name: 'Номер 108', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
+      { id: '101', name: 'Номер 101', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
+      { id: '102', name: 'Номер 102', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
+      { id: '103', name: 'Номер 103', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
+      { id: '104', name: 'Номер 104', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Раздельные кровати'] },
+      { id: '105', name: 'Номер 105', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
+      { id: '106', name: 'Номер 106', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
+      { id: '107', name: 'Номер 107', floor: 1, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '108', name: 'Номер 108', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
       // 2 этаж
-      { id: '203', name: 'Номер 203', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '204', name: 'Номер 204', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Улица Яссауи', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
-      { id: '205', name: 'Номер 205', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '206', name: 'Номер 206', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '208', name: 'Номер 208', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '210', name: 'Номер 210', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '203', name: 'Номер 203', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '204', name: 'Номер 204', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
+      { id: '205', name: 'Номер 205', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '206', name: 'Номер 206', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '208', name: 'Номер 208', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '210', name: 'Номер 210', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
       // 3 этаж
-      { id: '303', name: 'Номер 303', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '304', name: 'Номер 304', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Улица Яссауи', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
-      { id: '305', name: 'Номер 305', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '306', name: 'Номер 306', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '309', name: 'Номер 309', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '311', name: 'Номер 311', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '303', name: 'Номер 303', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '304', name: 'Номер 304', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
+      { id: '305', name: 'Номер 305', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '306', name: 'Номер 306', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '309', name: 'Номер 309', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '311', name: 'Номер 311', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
       // 4 этаж
-      { id: '403', name: 'Номер 403', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '404', name: 'Номер 404', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Улица Яссауи', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
-      { id: '405', name: 'Номер 405', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '406', name: 'Номер 406', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '408', name: 'Номер 408', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '410', name: 'Номер 410', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] }
+      { id: '403', name: 'Номер 403', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '404', name: 'Номер 404', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
+      { id: '405', name: 'Номер 405', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '406', name: 'Номер 406', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '408', name: 'Номер 408', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '410', name: 'Номер 410', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] }
     ]
   },
   deluxe: {
@@ -58,12 +58,12 @@ const ROOMS_DATA = {
     description: 'Просторные номера повышенной комфортности. Отличный выбор для романтического отдыха и деловых поездок с повышенным комфортом.',
     icon: '✨',
     rooms: [
-      { id: '202', name: 'Номер 202', floor: 2, bedType: 'Двуспальная кровать (180x200) + диван', capacity: 3, size: '32 м²', view: 'Мавзолей Ходжи Ахмеда Ясави', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Душ', 'Балкон'], price: 30000, isAvailable: true, windows: 'Панорамный вид', features: ['Вид на мавзолей', 'Балкон'] },
-      { id: '211', name: 'Номер 211', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна', 'Балкон'], price: 30000, isAvailable: true, windows: 'Два окна', features: ['Ванна', 'Балкон'] },
-      { id: '302', name: 'Номер 302', floor: 3, bedType: 'Двуспальная кровать (180x200) + диван', capacity: 3, size: '32 м²', view: 'Мавзолей Ходжи Ахмеда Ясави', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Душ', 'Балкон'], price: 30000, isAvailable: true, windows: 'Панорамный вид', features: ['Вид на мавзолей', 'Балкон'] },
-      { id: '307', name: 'Номер 307', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна', 'Балкон'], price: 30000, isAvailable: true, windows: 'Два окна', features: ['Ванна'] },
-      { id: '402', name: 'Номер 402', floor: 4, bedType: 'Двуспальная кровать (180x200) + диван', capacity: 3, size: '32 м²', view: 'Мавзолей Ходжи Ахмеда Ясави', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Душ', 'Балкон'], price: 30000, isAvailable: true, windows: 'Панорамный вид', features: ['Вид на мавзолей'] },
-      { id: '411', name: 'Номер 411', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна'], price: 30000, isAvailable: true, windows: 'Два окна', features: ['Джакузи'] }
+      { id: '202', name: 'Номер 202', floor: 2, bedType: 'Двуспальная кровать (180x200) + однаспальные', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ', ], price: 30000, isAvailable: true, windows: 'Панорамный вид',  },
+      { id: '211', name: 'Номер 211', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 30000, isAvailable: true, windows: 'Два окна', },
+      { id: '302', name: 'Номер 302', floor: 3, bedType: 'Двуспальная кровать (180x200) + однаспальные', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ' ], price: 30000, isAvailable: true, windows: 'Панорамный вид', },
+      { id: '307', name: 'Номер 307', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Два окна',  },
+      { id: '402', name: 'Номер 402', floor: 4, bedType: 'Двуспальная кровать (180x200) + однаспальные', capacity: 3, size: '32 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ' ], price: 30000, isAvailable: true, windows: 'Панорамный вид', },
+      { id: '411', name: 'Номер 411', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Два окна',  }
     ]
   },
   family: {
@@ -72,15 +72,15 @@ const ROOMS_DATA = {
     description: 'Просторные двухкомнатные номера для комфортного проживания всей семьёй. Есть всё для качественного отдыха с детьми.',
     icon: '👨‍👩‍👧‍👦',
     rooms: [
-      { id: '201', name: 'Номер 201', floor: 2, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', view: 'Мавзолей Ходжи Ахмеда Ясави', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна', 'Балкон', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид', features: ['Две комнаты', 'Вид на мавзолей', 'Детская кроватка'] },
-      { id: '207', name: 'Номер 207', floor: 2, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Душ', 'Балкон'], price: 35000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Две комнаты', 'Детская кроватка'] },
-      { id: '209', name: 'Номер 209', floor: 2, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', view: 'Мавзолей Ходжи Ахмеда Ясави', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна', 'Балкон'], price: 35000, isAvailable: true, windows: 'Панорамный вид', features: ['Две комнаты', 'Вид на мавзолей'] },
-      { id: '301', name: 'Номер 301', floor: 3, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', view: 'Мавзолей Ходжи Ахмеда Ясави', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна', 'Балкон', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид', features: ['Две комнаты', 'Вид на мавзолей', 'Детская кроватка'] },
-      { id: '308', name: 'Номер 308', floor: 3, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Душ', 'Балкон'], price: 35000, isAvailable: true, windows: 'Два окна', features: ['Две комнаты', 'Балкон', 'Детская кроватка'] },
-      { id: '310', name: 'Номер 310', floor: 3, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна', 'Балкон'], price: 35000, isAvailable: true, windows: 'Два окна', features: ['Две комнаты', 'Тихий номер'] },
-      { id: '401', name: 'Номер 401', floor: 4, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', view: 'Мавзолей Ходжи Ахмеда Ясави', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна', 'Балкон', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид', features: ['Две комнаты', 'Вид на мавзолей', 'Детская кроватка'] },
-      { id: '407', name: 'Номер 407', floor: 4, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Душ', 'Балкон'], price: 35000, isAvailable: true, windows: 'Два окна', features: ['Две комнаты', 'Балкон', 'Детская кроватка'] },
-      { id: '409', name: 'Номер 409', floor: 4, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', view: 'Внутренний двор', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Мини-бар', 'Ванна', 'Балкон'], price: 35000, isAvailable: true, windows: 'Два окна', features: ['Две комнаты', 'Тихий номер'] }
+      { id: '201', name: 'Номер 201', floor: 2, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ',  'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид',  },
+      { id: '207', name: 'Номер 207', floor: 2, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 35000, isAvailable: true, windows: 'Окно выходит во двор',  },
+      { id: '209', name: 'Номер 209', floor: 2, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 35000, isAvailable: true, windows: 'Панорамный вид', },
+      { id: '301', name: 'Номер 301', floor: 3, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид',  },
+      { id: '308', name: 'Номер 308', floor: 3, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 35000, isAvailable: true, windows: 'Два окна',  },
+      { id: '310', name: 'Номер 310', floor: 3, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 35000, isAvailable: true, windows: 'Два окна',  },
+      { id: '401', name: 'Номер 401', floor: 4, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид', },
+      { id: '407', name: 'Номер 407', floor: 4, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ',], price: 35000, isAvailable: true, windows: 'Два окна',  },
+      { id: '409', name: 'Номер 409', floor: 4, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ',], price: 35000, isAvailable: true, windows: 'Два окна',  }
     ]
   }
 };
@@ -113,7 +113,7 @@ const FOOD_MENU = [
   { id: 'f1', name: 'Бешбармак', price: 3500 },
   { id: 'f2', name: 'Плов', price: 2800 },
   { id: 'f3', name: 'Борщ', price: 2000 },
-  { id: 'f4', name: 'Шашлык из баранины', price: 4200 },
+  { id: 'f4', name: 'Шашлык из баранины', price: 700 },
   { id: 'f5', name: 'Лагман', price: 2500 },
   { id: 'f6', name: 'Чай / кофе', price: 800 },
   { id: 'f7', name: 'Вода 0.5л', price: 500 },
@@ -300,7 +300,7 @@ function Hero({ onBookClick }) {
             в двух шагах от истории.
           </p>
           <button onClick={onBookClick} className="gv-btn-gold">
-            Забронировать номер <ChevronRight size={18} />
+            Сначало выберите номер <ChevronRight size={18} />
           </button>
         </ArchFrame>
       </div>
@@ -709,11 +709,11 @@ function Footer() {
       <div className="gv-footer-grid">
         <div>
           <p className="gv-wordmark-main">{HOTEL_NAME}</p>
-          <p className="gv-footer-muted">Ваш дом в сердце {HOTEL_CITY}а</p>
+          <p className="gv-footer-muted">Ваш дом в сердце Туркестана {HOTEL_CITY}а</p>
         </div>
         <div className="gv-footer-contact">
-          <p><MapPin size={16} className="gv-stroke-gold-light" /> ул. Яссауи, {HOTEL_CITY}, Казахстан</p>
-          <p><Phone size={16} className="gv-stroke-gold-light" /> +7 700 123 45 67</p>
+          <p><MapPin size={16} className="gv-stroke-gold-light" /> ул. Б.Саттарханова 55, {HOTEL_CITY}, Казахстан</p>
+          <p><Phone size={16} className="gv-stroke-gold-light" /> +7 707 454 16 96</p>
         </div>
       </div>
       <p className="gv-footer-copy">© {new Date().getFullYear()} {HOTEL_NAME}. Все права защищены.</p>
@@ -958,7 +958,7 @@ function FoodMenuModal({ roomNumber, onClose, onDone }) {
           <X size={20} />
         </button>
         <UtensilsCrossed size={30} className="gv-stroke-gold" />
-        <h3 className="gv-modal-title">Menu кухни</h3>
+        <h3 className="gv-modal-title">Menu кухни пока недоступно</h3>
 
         <div className="gv-food-list">
           {FOOD_MENU.map((item) => (
@@ -1053,25 +1053,7 @@ function parseRoute(pathname) {
   return { mode: 'landing', roomNumber: null };
 }
 
-function DemoSwitcher({ current, goTo }) {
-  return (
-    <div className="gv-demo-switcher">
-      <span>Демо-просмотр:</span>
-      <button
-        className={current.mode === 'landing' ? 'gv-demo-active' : ''}
-        onClick={() => goTo('/')}
-      >
-        Лендинг
-      </button>
-      <button
-        className={current.mode === 'room' ? 'gv-demo-active' : ''}
-        onClick={() => goTo('/room/101')}
-      >
-        QR: Номер 101
-      </button>
-    </div>
-  );
-}
+
 
 /* =========================================================================
    ГЛОБАЛЬНЫЕ СТИЛИ (токены дизайна)
