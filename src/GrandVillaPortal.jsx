@@ -1663,7 +1663,6 @@ export default function GrandVillaPortal() {
       ) : (
         <LandingPage onSelectRoom={handleSelectRoom} selectedRoom={selectedRoom} />
       )}
-      <DemoSwitcher current={route} goTo={goTo} />
     </div>
   );
 }
