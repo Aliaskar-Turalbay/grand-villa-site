@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu, X, Phone, MapPin, ChevronRight, ArrowLeft, Loader2, AlertCircle,
-  CheckCircle2, MessageCircle, Star, Wifi, Clock, Ban, ShieldAlert, BedDouble,
-  Sparkles, Shirt, Bath, GlassWater, UtensilsCrossed, Plus, Minus
+  CheckCircle2, MessageCircle, Star, Wifi, Clock, Ban, ShieldAlert,
+  Sparkles, Shirt, Bath, GlassWater, UtensilsCrossed, Plus, Minus, Search, Filter, Calendar
 } from 'lucide-react';
 
 /* =========================================================================
    КОНФИГУРАЦИЯ И ДАННЫЕ
    ========================================================================= */
 
-const WHATSAPP_NUMBER = '77770207773'; // TODO: заменить на реальный номер Алии
+const WHATSAPP_NUMBER = '77770207773';
 const HOTEL_NAME = 'Grand Villa';
 const HOTEL_CITY = 'Туркестан';
 
@@ -20,36 +21,32 @@ const ROOMS_DATA = {
     description: 'Уютные номера с классическим дизайном. Идеальный выбор для деловых поездок и комфортного отдыха в Туркестане.',
     icon: '🛏️',
     rooms: [
-      // 1 этаж
-      { id: '101', name: 'Номер 101', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
-      { id: '102', name: 'Номер 102', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
-      { id: '103', name: 'Номер 103', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
-      { id: '104', name: 'Номер 104', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Раздельные кровати'] },
-      { id: '105', name: 'Номер 105', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
-      { id: '106', name: 'Номер 106', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
-      { id: '107', name: 'Номер 107', floor: 1, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '108', name: 'Номер 108', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
-      // 2 этаж
-      { id: '203', name: 'Номер 203', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '204', name: 'Номер 204', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
-      { id: '205', name: 'Номер 205', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '101', name: 'Номер 101', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
+      { id: '102', name: 'Номер 102', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
+      { id: '103', name: 'Номер 103', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Тихий номер', 'Раздельные кровати'] },
+      { id: '104', name: 'Номер 104', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Раздельные кровати'] },
+      { id: '105', name: 'Номер 105', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
+      { id: '106', name: 'Номер 106', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
+      { id: '107', name: 'Номер 107', floor: 1, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '108', name: 'Номер 108', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Раздельные кровати'] },
+      { id: '203', name: 'Номер 203', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '204', name: 'Номер 204', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
+      { id: '205', name: 'Номер 205', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
       { id: '206', name: 'Номер 206', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '208', name: 'Номер 208', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '210', name: 'Номер 210', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      // 3 этаж
-      { id: '303', name: 'Номер 303', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '304', name: 'Номер 304', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
-      { id: '305', name: 'Номер 305', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '306', name: 'Номер 306', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '309', name: 'Номер 309', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '311', name: 'Номер 311', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      // 4 этаж
-      { id: '403', name: 'Номер 403', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '404', name: 'Номер 404', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
-      { id: '405', name: 'Номер 405', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '406', name: 'Номер 406', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '408', name: 'Номер 408', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
-      { id: '410', name: 'Номер 410', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] }
+      { id: '208', name: 'Номер 208', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '210', name: 'Номер 210', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '303', name: 'Номер 303', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '304', name: 'Номер 304', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
+      { id: '305', name: 'Номер 305', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '306', name: 'Номер 306', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '309', name: 'Номер 309', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '311', name: 'Номер 311', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '403', name: 'Номер 403', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '404', name: 'Номер 404', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу', features: ['Двуспальная кровать'] },
+      { id: '405', name: 'Номер 405', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '406', name: 'Номер 406', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '408', name: 'Номер 408', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] },
+      { id: '410', name: 'Номер 410', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор', features: ['Двуспальная кровать'] }
     ]
   },
   deluxe: {
@@ -58,12 +55,12 @@ const ROOMS_DATA = {
     description: 'Просторные номера повышенной комфортности. Отличный выбор для романтического отдыха и деловых поездок с повышенным комфортом.',
     icon: '✨',
     rooms: [
-      { id: '202', name: 'Номер 202', floor: 2, bedType: 'Двуспальная кровать (180x200) + однаспальные', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ', ], price: 30000, isAvailable: true, windows: 'Панорамный вид',  },
-      { id: '211', name: 'Номер 211', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 30000, isAvailable: true, windows: 'Два окна', },
-      { id: '302', name: 'Номер 302', floor: 3, bedType: 'Двуспальная кровать (180x200) + однаспальные', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ' ], price: 30000, isAvailable: true, windows: 'Панорамный вид', },
-      { id: '307', name: 'Номер 307', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Два окна',  },
-      { id: '402', name: 'Номер 402', floor: 4, bedType: 'Двуспальная кровать (180x200) + однаспальные', capacity: 3, size: '32 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ' ], price: 30000, isAvailable: true, windows: 'Панорамный вид', },
-      { id: '411', name: 'Номер 411', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', view: 'Городской пейзаж', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Два окна',  }
+      { id: '202', name: 'Номер 202', floor: 2, bedType: 'Двуспальная кровать (180x200) + односпальная', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Панорамный вид' },
+      { id: '211', name: 'Номер 211', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Два окна' },
+      { id: '302', name: 'Номер 302', floor: 3, bedType: 'Двуспальная кровать (180x200) + односпальная', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Панорамный вид' },
+      { id: '307', name: 'Номер 307', floor: 3, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Два окна' },
+      { id: '402', name: 'Номер 402', floor: 4, bedType: 'Двуспальная кровать (180x200) + односпальная', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Панорамный вид' },
+      { id: '411', name: 'Номер 411', floor: 4, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Два окна' }
     ]
   },
   family: {
@@ -72,55 +69,54 @@ const ROOMS_DATA = {
     description: 'Просторные двухкомнатные номера для комфортного проживания всей семьёй. Есть всё для качественного отдыха с детьми.',
     icon: '👨‍👩‍👧‍👦',
     rooms: [
-      { id: '201', name: 'Номер 201', floor: 2, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ',  'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид',  },
-      { id: '207', name: 'Номер 207', floor: 2, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 35000, isAvailable: true, windows: 'Окно выходит во двор',  },
-      { id: '209', name: 'Номер 209', floor: 2, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 35000, isAvailable: true, windows: 'Панорамный вид', },
-      { id: '301', name: 'Номер 301', floor: 3, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид',  },
-      { id: '308', name: 'Номер 308', floor: 3, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 35000, isAvailable: true, windows: 'Два окна',  },
-      { id: '310', name: 'Номер 310', floor: 3, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ'], price: 35000, isAvailable: true, windows: 'Два окна',  },
-      { id: '401', name: 'Номер 401', floor: 4, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид', },
-      { id: '407', name: 'Номер 407', floor: 4, bedType: 'Двуспальная кровать (180x200) + диван-кровать', capacity: 4, size: '42 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ',], price: 35000, isAvailable: true, windows: 'Два окна',  },
-      { id: '409', name: 'Номер 409', floor: 4, bedType: 'Двуспальная кровать (180x200) + 2 односпальные', capacity: 4, size: '45 м²',  amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор',  'Душ',], price: 35000, isAvailable: true, windows: 'Два окна',  }
+      { id: '201', name: 'Номер 201', floor: 2, bedType: 'Двуспальная кровать + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид' },
+      { id: '207', name: 'Номер 207', floor: 2, bedType: 'Двуспальная кровать + диван-кровать', capacity: 4, size: '42 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 35000, isAvailable: true, windows: 'Окно выходит во двор' },
+      { id: '209', name: 'Номер 209', floor: 2, bedType: 'Двуспальная кровать + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 35000, isAvailable: true, windows: 'Панорамный вид' },
+      { id: '301', name: 'Номер 301', floor: 3, bedType: 'Двуспальная кровать + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид' },
+      { id: '308', name: 'Номер 308', floor: 3, bedType: 'Двуспальная кровать + диван-кровать', capacity: 4, size: '42 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 35000, isAvailable: true, windows: 'Два окна' },
+      { id: '310', name: 'Номер 310', floor: 3, bedType: 'Двуспальная кровать + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 35000, isAvailable: true, windows: 'Два окна' },
+      { id: '401', name: 'Номер 401', floor: 4, bedType: 'Двуспальная кровать + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид' },
+      { id: '407', name: 'Номер 407', floor: 4, bedType: 'Двуспальная кровать + диван-кровать', capacity: 4, size: '42 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 35000, isAvailable: true, windows: 'Два окна' },
+      { id: '409', name: 'Номер 409', floor: 4, bedType: 'Двуспальная кровать + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 35000, isAvailable: true, windows: 'Два окна' }
     ]
   }
 };
 
-/* Информация для гостей номеров (QR-раздел) */
 const WIFI_PASSWORD = '12345678';
 const BREAKFAST_TIME = '08:00–10:00, ежедневно';
 
 const HOUSE_RULES = [
-  'Курение в номерах строго запрещено — при обнаружении взимается штраф.',
-  'Пожалуйста, бережно относитесь к имуществу отеля.',
-  'При выезде убедитесь, что ключ от номера возвращён на ресепшен.',
+  'Курение в номерах строго запрещено — штраф при обнаружении.',
+  'Бережное отношение к инфраструктуре и отделке отеля.',
+  'При выезде ключ сдаётся на стойку администрации.',
 ];
 
 const PENALTIES = [
   { title: 'Утеря ключа от номера', amount: 5000 },
-  { title: 'Пятна, порезы и повреждения мебели/текстиля, которые не удаётся устранить', amount: 5000 },
-  { title: 'Иной ущерб имуществу номера', note: 'штраф — по факту оценки стоимости ремонта' },
+  { title: 'Повреждения мебели или текстиля', amount: 5000 },
+  { title: 'Иной ущерб номерному фонду', note: 'по факту оценки стоимости ремонта' },
 ];
 
 const SERVICES = [
-  { id: 'cleaning', label: 'Уборка в номере', icon: Sparkles, type: 'уборка' },
-  { id: 'iron', label: 'Попросить утюг', icon: Shirt, type: 'утюг' },
+  { id: 'cleaning', label: 'Уборка номера', icon: Sparkles, type: 'уборка' },
+  { id: 'iron', label: 'Утюг и глажка', icon: Shirt, type: 'утюг' },
   { id: 'towels', label: 'Чистые полотенца', icon: Bath, type: 'полотенца' },
-  { id: 'water', label: 'Принести воду', icon: GlassWater, type: 'вода' },
-  { id: 'food', label: 'Заказать еду', icon: UtensilsCrossed, type: 'еда' },
+  { id: 'water', label: 'Доставка воды', icon: GlassWater, type: 'вода' },
+  { id: 'food', label: 'Заказ еды', icon: UtensilsCrossed, type: 'еда' },
 ];
 
 const FOOD_MENU = [
   { id: 'f1', name: 'Бешбармак', price: 3500 },
-  { id: 'f2', name: 'Плов', price: 2800 },
-  { id: 'f3', name: 'Борщ', price: 2000 },
+  { id: 'f2', name: 'Плов премиум', price: 2800 },
+  { id: 'f3', name: 'Борщ по-домашнему', price: 2000 },
   { id: 'f4', name: 'Шашлык из баранины', price: 700 },
-  { id: 'f5', name: 'Лагман', price: 2500 },
-  { id: 'f6', name: 'Чай / кофе', price: 800 },
-  { id: 'f7', name: 'Вода 0.5л', price: 500 },
+  { id: 'f5', name: 'Лагман уйгурский', price: 2500 },
+  { id: 'f6', name: 'Кофейный сет / Чайник чая', price: 800 },
+  { id: 'f7', name: 'Минеральная вода 0.5л', price: 500 },
 ];
 
 /* =========================================================================
-   API-УТИЛИТА
+   API УТИЛИТЫ
    ========================================================================= */
 
 const BACKEND_BASE_URL = 'https://grand-villa-bot-production.up.railway.app';
@@ -133,12 +129,8 @@ async function apiPost(url, payload) {
       body: JSON.stringify(payload),
     });
     let data = null;
-    try {
-      data = await res.json();
-    } catch (_) {}
-    if (!res.ok) {
-      return { ok: false, status: res.status, data };
-    }
+    try { data = await res.json(); } catch (_) {}
+    if (!res.ok) return { ok: false, status: res.status, data };
     return { ok: true, status: res.status, data };
   } catch (err) {
     return { ok: false, status: 0, data: null, networkError: true };
@@ -149,12 +141,8 @@ async function apiGet(url) {
   try {
     const res = await fetch(`${BACKEND_BASE_URL}${url}`);
     let data = null;
-    try {
-      data = await res.json();
-    } catch (_) {}
-    if (!res.ok) {
-      return { ok: false, status: res.status, data };
-    }
+    try { data = await res.json(); } catch (_) {}
+    if (!res.ok) return { ok: false, status: res.status, data };
     return { ok: true, status: res.status, data };
   } catch (err) {
     return { ok: false, status: 0, data: null, networkError: true };
@@ -166,50 +154,40 @@ function formatTenge(value) {
 }
 
 /* =========================================================================
-   ФИРМЕННЫЙ ВИЗУАЛЬНЫЙ МОТИВ — арка-портал (иван) и звёздчатый узор
+   ДЕКОРАТИВНЫЕ ЭЛЕМЕНТЫ (Восточные Арочные узоры)
    ========================================================================= */
 
-function ArchFrame({ className = '', strokeClass = 'gv-stroke-gold', children }) {
+function ArchFrame({ className = '', strokeClass = 'stroke-amber-600/40', children }) {
   return (
-    <div className={`gv-arch-wrap ${className}`}>
-      <svg viewBox="0 0 300 300" className="gv-arch-svg" preserveAspectRatio="none" aria-hidden="true">
+    <div className={`relative text-center px-6 pt-12 pb-8 ${className}`}>
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 300" preserveAspectRatio="none">
         <path
           d="M14,296 L14,150 Q14,14 150,14 Q286,14 286,150 L286,296"
           fill="none"
           className={strokeClass}
-          strokeWidth="2.5"
+          strokeWidth="1.5"
         />
         <path
-          d="M34,296 L34,152 Q34,34 150,34 Q266,34 266,152 L266,296"
+          d="M24,296 L24,152 Q24,24 150,24 Q276,24 276,152 L276,296"
           fill="none"
           className={strokeClass}
-          strokeWidth="1"
-          opacity="0.5"
+          strokeWidth="0.5"
+          strokeDasharray="4 2"
         />
       </svg>
-      <div className="gv-arch-content">{children}</div>
+      <div className="relative z-10">{children}</div>
     </div>
   );
 }
 
-function StarPatternBg({ className = '' }) {
+function PatternBackground() {
   return (
-    <svg className={`gv-star-bg ${className}`} aria-hidden="true">
-      <defs>
-        <pattern id="gv-star-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-          <g transform="translate(20,20)">
-            <rect width="14" height="14" x="-7" y="-7" transform="rotate(45)" fill="none" stroke="currentColor" strokeWidth="0.75" />
-            <rect width="14" height="14" x="-7" y="-7" fill="none" stroke="currentColor" strokeWidth="0.75" />
-          </g>
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#gv-star-pattern)" />
-    </svg>
+    <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#b8872f_1px,transparent_1px)] [background-size:16px_16px]" />
   );
 }
 
 /* =========================================================================
-   ОБЩИЕ UI-ЭЛЕМЕНТЫ
+   УВЕДОМЛЕНИЯ (TOAST)
    ========================================================================= */
 
 function Toast({ toast, onClose }) {
@@ -223,99 +201,181 @@ function Toast({ toast, onClose }) {
 
   const isError = toast.type === 'error';
   return (
-    <div className={`gv-toast ${isError ? 'gv-toast-error' : 'gv-toast-success'}`} role="status">
-      {isError ? <AlertCircle size={20} /> : <CheckCircle2 size={20} />}
-      <span>{toast.message}</span>
-    </div>
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-full shadow-2xl backdrop-blur-md text-sm font-medium border ${
+          isError 
+            ? 'bg-rose-950/90 text-rose-200 border-rose-800/50' 
+            : 'bg-emerald-950/90 text-emerald-200 border-emerald-800/50'
+        }`}
+      >
+        {isError ? <AlertCircle className="w-5 h-5 text-rose-400" /> : <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
+        <span>{toast.message}</span>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
 /* =========================================================================
-   СЦЕНАРИЙ 1 — ЛЕНДИНГ И БРОНИРОВАНИЕ
+   HEADER
    ========================================================================= */
 
 function Header({ onBookClick }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const links = [
     { label: 'Номера', href: '#rooms' },
     { label: 'Бронирование', href: '#booking-form' },
     { label: 'Контакты', href: '#footer' },
   ];
+
   return (
-    <header className="gv-header">
-      <div className="gv-header-inner">
-        <div className="gv-wordmark">
-          <span className="gv-wordmark-main">{HOTEL_NAME}</span>
-          <span className="gv-wordmark-sub">{HOTEL_CITY}</span>
+    <header className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md ${
+      scrolled 
+        ? 'bg-amber-50/90 shadow-sm border-b border-amber-900/10 py-3' 
+        : 'bg-amber-50/50 border-b border-transparent py-5'
+    }`}>
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div className="flex flex-col">
+          <span className="font-serif font-bold text-2xl tracking-tight text-amber-950 uppercase">{HOTEL_NAME}</span>
+          <span className="text-[10px] tracking-[0.3em] font-semibold text-amber-600 uppercase">{HOTEL_CITY}</span>
         </div>
 
-        <nav className="gv-nav-desktop">
+        <nav className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="gv-nav-link">
+            <a key={l.href} href={l.href} className="text-sm font-medium text-stone-700 hover:text-amber-600 transition-colors">
               {l.label}
             </a>
           ))}
-          <button onClick={onBookClick} className="gv-btn-gold-sm">
+          <button 
+            onClick={onBookClick} 
+            className="px-5 py-2.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold uppercase tracking-wider transition-all duration-200 shadow-md shadow-amber-600/20 active:scale-95"
+          >
             Забронировать
           </button>
         </nav>
 
-        <button className="gv-nav-toggle" onClick={() => setOpen((v) => !v)} aria-label="Меню">
-          {open ? <X size={22} /> : <Menu size={22} />}
+        <button 
+          onClick={() => setOpen(!open)} 
+          className="md:hidden p-2 text-stone-800 hover:text-amber-600 focus:outline-none"
+        >
+          {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {open && (
-        <div className="gv-nav-mobile">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} className="gv-nav-link" onClick={() => setOpen(false)}>
-              {l.label}
-            </a>
-          ))}
-          <button
-            onClick={() => {
-              setOpen(false);
-              onBookClick();
-            }}
-            className="gv-btn-gold-sm"
+      <AnimatePresence>
+        {open && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="md:hidden border-t border-amber-900/10 bg-amber-50/95 overflow-hidden"
           >
-            Забронировать
-          </button>
-        </div>
-      )}
+            <div className="px-6 py-6 flex flex-col gap-4">
+              {links.map((l) => (
+                <a 
+                  key={l.href} 
+                  href={l.href} 
+                  onClick={() => setOpen(false)}
+                  className="text-base font-medium text-stone-800 hover:text-amber-600"
+                >
+                  {l.label}
+                </a>
+              ))}
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  onBookClick();
+                }}
+                className="w-full py-3 rounded-xl bg-amber-600 text-white font-medium text-sm shadow-md"
+              >
+                Забронировать
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
 
+/* =========================================================================
+   HERO SECTION
+   ========================================================================= */
+
 function Hero({ onBookClick }) {
   return (
-    <section className="gv-hero">
-      <StarPatternBg className="gv-hero-bg" />
-      <div className="gv-hero-inner">
-        <ArchFrame className="gv-hero-arch">
-          <p className="gv-eyebrow">На древнем Шёлковом пути</p>
-          <h1 className="gv-hero-title">{HOTEL_NAME}</h1>
-          <p className="gv-hero-subtitle">
-            Дом с характером в самом сердце {HOTEL_CITY}а — рядом с мавзолеем Ходжи Ахмеда Ясави,
-            в двух шагах от истории.
-          </p>
-          <button onClick={onBookClick} className="gv-btn-gold">
-            Сначало выберите номер <ChevronRight size={18} />
-          </button>
+    <section className="relative min-h-[80vh] bg-stone-900 text-amber-50 flex items-center justify-center px-6 py-20 overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/30 via-stone-900 to-stone-950" />
+      <PatternBackground />
+      
+      <div className="relative z-10 max-w-3xl mx-auto text-center">
+        <ArchFrame className="backdrop-blur-sm bg-stone-900/40 rounded-2xl border border-amber-500/10 shadow-2xl p-8 md:p-12">
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-xs uppercase font-bold tracking-[0.25em] text-amber-400 mb-3"
+          >
+            Шёлковый Путь & Гостеприимство
+          </motion.p>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="font-serif text-4xl md:text-6xl font-extrabold tracking-tight text-amber-100 mb-6"
+          >
+            {HOTEL_NAME}
+          </motion.h1>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-stone-300 text-base md:text-lg leading-relaxed mb-8 max-w-xl mx-auto font-light"
+          >
+            Премиальный уют в самом сердце древнего {HOTEL_CITY}а. В нескольких шагах от мавзолея Ходжи Ахмеда Ясави.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <button 
+              onClick={onBookClick} 
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-semibold text-sm tracking-wide transition-all shadow-lg shadow-amber-500/20 active:scale-95 group"
+            >
+              <span>Выбрать номер</span>
+              <ChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </motion.div>
         </ArchFrame>
       </div>
     </section>
   );
 }
 
+/* =========================================================================
+   ROOMS GRID (Сетка Номеров)
+   ========================================================================= */
+
 function RoomsGrid({ onSelectRoom, roomsAvailability }) {
-  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [expandedCategory, setExpandedCategory] = useState('standard');
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Реальный статус номера: сначала смотрим в данные с backend (roomsAvailability),
-  // если по этому номеру данных ещё нет (бэкенд не ответил / номер не заведён в БД) —
-  // используем захардкоженное значение по умолчанию, чтобы UI не был пустым.
   const isRoomAvailable = (room) => {
     if (roomsAvailability && Object.prototype.hasOwnProperty.call(roomsAvailability, room.id)) {
       return roomsAvailability[room.id];
@@ -325,8 +385,6 @@ function RoomsGrid({ onSelectRoom, roomsAvailability }) {
 
   const toggleCategory = (categoryId) => {
     setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
-    setSelectedRoom(null);
-    setShowDetails(false);
   };
 
   const handleRoomSelect = (room) => {
@@ -343,181 +401,231 @@ function RoomsGrid({ onSelectRoom, roomsAvailability }) {
     else if (room.id.startsWith('4') && ['402', '411'].includes(room.id)) categoryId = 'deluxe';
     else if (room.id.startsWith('4') && ['401', '407', '409'].includes(room.id)) categoryId = 'family';
 
-    // Передаём и категорию (для формы), и конкретный номер (чтобы забронировать именно его)
     onSelectRoom({ category: categoryId, roomNumber: room.id });
     const el = document.getElementById('booking-form');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <section id="rooms" className="gv-section gv-section-cream">
-      <p className="gv-eyebrow gv-eyebrow-dark">Наши номера</p>
-      <h2 className="gv-section-title">Выберите идеальный номер</h2>
-      
-      <div className="gv-rooms-container">
-        {Object.values(ROOMS_DATA).map((category) => {
-          const totalRooms = category.rooms.length;
-          const availableRooms = category.rooms.filter((r) => isRoomAvailable(r)).length;
-          const isExpanded = expandedCategory === category.id;
+    <section id="rooms" className="py-20 px-6 bg-amber-50/50 relative">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <p className="text-xs uppercase font-bold tracking-[0.2em] text-amber-600 mb-2">Размещение</p>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-stone-900">Номера и Апартаменты</h2>
+        </div>
 
-          return (
-            <div key={category.id} className="gv-category-card">
+        <div className="space-y-6">
+          {Object.values(ROOMS_DATA).map((category) => {
+            const totalRooms = category.rooms.length;
+            const availableRooms = category.rooms.filter((r) => isRoomAvailable(r)).length;
+            const isExpanded = expandedCategory === category.id;
+
+            const filteredRooms = category.rooms.filter(room => 
+              room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              room.floor.toString().includes(searchQuery)
+            );
+
+            return (
               <div 
-                className="gv-category-header"
-                onClick={() => toggleCategory(category.id)}
+                key={category.id} 
+                className="bg-white rounded-2xl border border-amber-900/10 shadow-xl shadow-stone-200/50 overflow-hidden transition-all duration-300"
               >
-                <div className="gv-category-header-left">
-                  <span className="gv-category-icon">{category.icon}</span>
-                  <div>
-                    <h3 className="gv-category-title">{category.title}</h3>
-                    <p className="gv-category-subtitle">
-                      {totalRooms} номеров • {availableRooms} свободно
-                    </p>
+                <div 
+                  className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between cursor-pointer hover:bg-amber-50/30 transition-colors gap-4"
+                  onClick={() => toggleCategory(category.id)}
+                >
+                  <div className="flex items-center gap-5">
+                    <span className="text-3xl p-3 bg-amber-100/50 rounded-xl">{category.icon}</span>
+                    <div>
+                      <h3 className="font-serif text-2xl font-bold text-stone-900">{category.title}</h3>
+                      <p className="text-xs text-stone-500 font-medium mt-1">
+                        Всего номеров: {totalRooms} • <span className="text-emerald-600 font-semibold">{availableRooms} свободно</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 border-stone-100 pt-4 md:pt-0">
+                    <div className="text-left md:text-right">
+                      <span className="text-xs text-stone-400 font-medium block">Стоимость от</span>
+                      <span className="text-xl font-bold text-amber-700">{formatTenge(category.rooms[0].price)}</span>
+                      <span className="text-xs text-stone-500"> / ночь</span>
+                    </div>
+                    <div className={`p-2 rounded-full bg-stone-100 text-stone-600 transition-transform duration-300 ${isExpanded ? 'rotate-180 bg-amber-100 text-amber-800' : ''}`}>
+                      <ChevronRight size={20} className="rotate-90" />
+                    </div>
                   </div>
                 </div>
-                <div className="gv-category-price">
-                  от {formatTenge(category.rooms[0].price)}
-                  <span className="gv-category-price-unit">/ночь</span>
-                </div>
-              </div>
 
-              {isExpanded && (
-                <div className="gv-rooms-list">
-                  <p className="gv-category-desc">{category.description}</p>
-                  
-                  <div className="gv-rooms-grid">
-                    {category.rooms.map((room) => {
-                      const available = isRoomAvailable(room);
-                      return (
-                        <div 
-                          key={room.id} 
-                          className={`gv-room-item ${!available ? 'gv-room-unavailable' : ''}`}
-                          onClick={() => available && handleRoomSelect(room)}
-                        >
-                          <div className="gv-room-header">
-                            <span className="gv-room-number">{room.name}</span>
-                            <span className={`gv-room-status ${available ? 'gv-room-available' : 'gv-room-occupied'}`}>
-                              {available ? '🟢 Свободен' : '🔴 Занят'}
-                            </span>
-                          </div>
-                          
-                          <div className="gv-room-details">
-                            <div className="gv-room-detail-item">
-                              <span className="gv-room-detail-label">Этаж:</span>
-                              <span>{room.floor}</span>
-                            </div>
-                            <div className="gv-room-detail-item">
-                              <span className="gv-room-detail-label">Кровать:</span>
-                              <span>{room.bedType}</span>
-                            </div>
-                            <div className="gv-room-detail-item">
-                              <span className="gv-room-detail-label">Гостей:</span>
-                              <span>до {room.capacity}</span>
-                            </div>
-                            <div className="gv-room-detail-item">
-                              <span className="gv-room-detail-label">Площадь:</span>
-                              <span>{room.size}</span>
-                            </div>
-                            <div className="gv-room-detail-item">
-                              <span className="gv-room-detail-label">Вид:</span>
-                              <span>{room.view}</span>
-                            </div>
-                          </div>
-
-                          <div className="gv-room-amenities">
-                            {room.amenities.slice(0, 4).map((amenity, idx) => (
-                              <span key={idx} className="gv-amenity-tag">{amenity}</span>
-                            ))}
-                            {room.amenities.length > 4 && (
-                              <span className="gv-amenity-tag gv-amenity-more">+{room.amenities.length - 4}</span>
-                            )}
-                          </div>
-
-                          {available && (
-                            <button 
-                              className="gv-btn-gold-sm gv-room-book-btn"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleBooking(room);
-                              }}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="border-t border-stone-100 bg-stone-50/50 p-6 md:p-8"
+                    >
+                      <p className="text-stone-600 text-sm mb-6 max-w-3xl leading-relaxed">{category.description}</p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[500px] overflow-y-auto pr-2">
+                        {filteredRooms.map((room) => {
+                          const available = isRoomAvailable(room);
+                          return (
+                            <motion.div 
+                              whileHover={{ y: -2 }}
+                              key={room.id} 
+                              onClick={() => available && handleRoomSelect(room)}
+                              className={`p-5 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
+                                !available 
+                                  ? 'bg-stone-100/60 border-stone-200 opacity-60 cursor-not-allowed' 
+                                  : 'bg-white border-amber-900/10 hover:border-amber-500/50 hover:shadow-lg cursor-pointer'
+                              }`}
                             >
-                              Забронировать
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+                              <div>
+                                <div className="flex items-center justify-between mb-3 pb-2 border-b border-stone-100">
+                                  <span className="font-bold text-stone-800 text-base">{room.name}</span>
+                                  <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
+                                    available ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                                  }`}>
+                                    {available ? 'Свободен' : 'Занят'}
+                                  </span>
+                                </div>
+
+                                <div className="space-y-1.5 text-xs text-stone-600 mb-4">
+                                  <div className="flex justify-between">
+                                    <span className="text-stone-400">Этаж:</span>
+                                    <span className="font-medium text-stone-700">{room.floor}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-stone-400">Кровать:</span>
+                                    <span className="font-medium text-stone-700 truncate max-w-[150px]">{room.bedType}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-stone-400">Вместимость:</span>
+                                    <span className="font-medium text-stone-700">до {room.capacity} гостей</span>
+                                  </div>
+                                </div>
+
+                                <div className="flex flex-wrap gap-1.5 mb-4">
+                                  {room.amenities.slice(0, 3).map((amenity, idx) => (
+                                    <span key={idx} className="text-[10px] bg-amber-50 text-amber-800 font-medium px-2 py-0.5 rounded-md border border-amber-200/50">
+                                      {amenity}
+                                    </span>
+                                  ))}
+                                  {room.amenities.length > 3 && (
+                                    <span className="text-[10px] bg-stone-100 text-stone-500 font-medium px-1.5 py-0.5 rounded-md">
+                                      +{room.amenities.length - 3}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {available && (
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleBooking(room);
+                                  }}
+                                  className="w-full py-2 rounded-lg bg-amber-600/10 hover:bg-amber-600 text-amber-800 hover:text-white text-xs font-semibold transition-colors duration-200"
+                                >
+                                  Забронировать
+                                </button>
+                              )}
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Модальное окно с деталями номера */}
-      {showDetails && selectedRoom && (
-        <div className="gv-modal-backdrop" onClick={() => setShowDetails(false)}>
-          <div className="gv-modal gv-modal-room-details" onClick={(e) => e.stopPropagation()}>
-            <button className="gv-modal-close" onClick={() => setShowDetails(false)} aria-label="Закрыть">
-              <X size={20} />
-            </button>
-            
-            <div className="gv-room-detail-header">
-              <span className="gv-room-detail-number">{selectedRoom.name}</span>
-              <span className="gv-room-detail-price">{formatTenge(selectedRoom.price)} / ночь</span>
-            </div>
+      {/* Модальное окно деталей номера */}
+      <AnimatePresence>
+        {showDetails && selectedRoom && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white w-full max-w-lg rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden"
+            >
+              <button 
+                onClick={() => setShowDetails(false)}
+                className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition-colors"
+              >
+                <X size={20} />
+              </button>
 
-            <div className="gv-room-detail-body">
-              <div className="gv-room-detail-grid">
-                <div className="gv-room-detail-info">
-                  <p><strong>Этаж:</strong> {selectedRoom.floor}</p>
-                  <p><strong>Тип кровати:</strong> {selectedRoom.bedType}</p>
-                  <p><strong>Вместимость:</strong> до {selectedRoom.capacity} гостей</p>
-                  <p><strong>Площадь:</strong> {selectedRoom.size}</p>
-                  <p><strong>Вид из окна:</strong> {selectedRoom.view}</p>
-                  <p><strong>Окна:</strong> {selectedRoom.windows}</p>
-                </div>
-                
-                <div className="gv-room-detail-amenities">
-                  <p><strong>Удобства:</strong></p>
-                  <ul>
-                    {selectedRoom.amenities.map((item, idx) => (
-                      <li key={idx}>✓ {item}</li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="flex items-baseline justify-between border-b border-stone-100 pb-4 mb-6">
+                <h3 className="font-serif text-2xl font-bold text-stone-900">{selectedRoom.name}</h3>
+                <span className="text-xl font-bold text-amber-600">{formatTenge(selectedRoom.price)} <span className="text-xs text-stone-400 font-normal">/ночь</span></span>
               </div>
 
-              {selectedRoom.features && selectedRoom.features.length > 0 && (
-                <div className="gv-room-detail-features">
-                  <p><strong>Особенности:</strong></p>
-                  <div className="gv-feature-tags">
-                    {selectedRoom.features.map((feature, idx) => (
-                      <span key={idx} className="gv-feature-tag">⭐ {feature}</span>
+              <div className="space-y-4 text-sm text-stone-600 mb-6">
+                <div className="grid grid-cols-2 gap-4 bg-stone-50 p-4 rounded-xl">
+                  <div>
+                    <span className="text-stone-400 text-xs block">Этаж</span>
+                    <span className="font-semibold text-stone-800">{selectedRoom.floor}</span>
+                  </div>
+                  <div>
+                    <span className="text-stone-400 text-xs block">Площадь</span>
+                    <span className="font-semibold text-stone-800">{selectedRoom.size}</span>
+                  </div>
+                  <div>
+                    <span className="text-stone-400 text-xs block">Спальное место</span>
+                    <span className="font-semibold text-stone-800">{selectedRoom.bedType}</span>
+                  </div>
+                  <div>
+                    <span className="text-stone-400 text-xs block">Вид</span>
+                    <span className="font-semibold text-stone-800">{selectedRoom.windows}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-stone-800 mb-2">Удобства в номере:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedRoom.amenities.map((item, idx) => (
+                      <span key={idx} className="bg-amber-50 text-amber-900 text-xs font-medium px-3 py-1 rounded-lg border border-amber-200/60">
+                        ✓ {item}
+                      </span>
                     ))}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
 
-            <div className="gv-room-detail-actions">
-              <button className="gv-btn-gold" onClick={() => {
-                setShowDetails(false);
-                handleBooking(selectedRoom);
-              }}>
-                Забронировать этот номер
-              </button>
-              <button className="gv-btn-outline" onClick={() => setShowDetails(false)}>
-                Закрыть
-              </button>
-            </div>
+              <div className="flex gap-3">
+                <button 
+                  className="flex-1 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm transition-colors shadow-md"
+                  onClick={() => {
+                    setShowDetails(false);
+                    handleBooking(selectedRoom);
+                  }}
+                >
+                  Забронировать
+                </button>
+                <button 
+                  className="px-5 py-3 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 text-sm font-medium transition-colors"
+                  onClick={() => setShowDetails(false)}
+                >
+                  Отмена
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </section>
   );
 }
+
+/* =========================================================================
+   BOOKING FORM SECTION
+   ========================================================================= */
 
 function BookingForm({ selectedRoom, onBookingSuccess }) {
   const [form, setForm] = useState({
@@ -527,10 +635,8 @@ function BookingForm({ selectedRoom, onBookingSuccess }) {
     checkIn: '',
     checkOut: '',
   });
-  const [status, setStatus] = useState('idle'); // idle | loading | success | error
+  const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  // Если гость сам меняет категорию в форме — отвязываемся от конкретного
-  // кликнутого номера (иначе можно случайно забронировать "не тот" номер).
   const [roomNumberOverridden, setRoomNumberOverridden] = useState(false);
 
   useEffect(() => {
@@ -552,7 +658,7 @@ function BookingForm({ selectedRoom, onBookingSuccess }) {
     setErrorMsg('');
 
     if (!form.name || !form.phone || !form.checkIn || !form.checkOut) {
-      setErrorMsg('Пожалуйста, заполните все поля.');
+      setErrorMsg('Пожалуйста, заполните все необходимые поля.');
       return;
     }
     if (new Date(form.checkOut) <= new Date(form.checkIn)) {
@@ -572,158 +678,436 @@ function BookingForm({ selectedRoom, onBookingSuccess }) {
 
     if (result.ok) {
       setStatus('success');
-      // Сообщаем наверх, какой именно номер забронирован, чтобы сразу
-      // пометить его "Занят" на сайте — не дожидаясь следующего опроса backend.
       const bookedRoomNumber = result.data?.room_number || targetRoomNumber;
       if (bookedRoomNumber && onBookingSuccess) {
         onBookingSuccess(bookedRoomNumber);
       }
-    } else if (result.status === 409) {
-      setStatus('error');
-      setErrorMsg(
-        result.data?.error ||
-          result.data?.message ||
-          'Этот номер уже забронирован на выбранные даты. Попробуйте другие даты или категорию.'
-      );
     } else {
       setStatus('error');
       setErrorMsg(
-        result.networkError
-          ? 'Не удалось связаться с сервером. Проверьте соединение и попробуйте снова.'
-          : 'Не удалось отправить бронирование. Попробуйте ещё раз чуть позже.'
+        result.status === 409
+          ? (result.data?.error || 'Номер уже занят на выбытые даты.')
+          : 'Ошибка отправки формы. Попробуйте еще раз.'
       );
     }
   };
 
-  if (status === 'success') {
-    return (
-      <section id="booking-form" className="gv-section gv-section-charcoal">
-        <div className="gv-booking-success">
-          <CheckCircle2 size={40} className="gv-stroke-gold" />
-          <h3>Бронирование отправлено!</h3>
-          <p>Мы свяжемся с вами по телефону {form.phone} для подтверждения.</p>
-          <button className="gv-btn-outline-light" onClick={() => setStatus('idle')}>
-            Забронировать ещё
-          </button>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section id="booking-form" className="gv-section gv-section-charcoal">
-      <div className="gv-booking-grid">
-        <div>
-          <p className="gv-eyebrow">Ваш визит</p>
-          <h2 className="gv-section-title gv-section-title-light">Оформить бронирование</h2>
+    <section id="booking-form" className="py-20 px-6 bg-stone-900 text-stone-100 relative overflow-hidden">
+      <PatternBackground />
+      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+        
+        <div className="lg:col-span-7">
+          <p className="text-xs uppercase font-bold tracking-[0.2em] text-amber-400 mb-2">Онлайн запись</p>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-6">Забронировать проживание</h2>
 
-          <form onSubmit={handleSubmit} className="gv-form">
-            {errorMsg && (
-              <div className="gv-form-error">
-                <AlertCircle size={18} />
-                <span>{errorMsg}</span>
+          {status === 'success' ? (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-stone-800/80 border border-amber-500/30 rounded-2xl p-8 text-center space-y-4 backdrop-blur-sm"
+            >
+              <div className="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle2 size={32} />
               </div>
-            )}
-
-            {targetRoomNumber && (
-              <div className="gv-form-notice">
-                <CheckCircle2 size={16} />
-                <span>Вы бронируете номер {targetRoomNumber}</span>
-              </div>
-            )}
-
-            <label className="gv-field">
-              <span>Имя</span>
-              <input type="text" value={form.name} onChange={update('name')} placeholder="Асель Нурланова" />
-            </label>
-
-            <label className="gv-field">
-              <span>Телефон</span>
-              <input type="tel" value={form.phone} onChange={update('phone')} placeholder="+7 7__ ___ __ __" />
-            </label>
-
-            <label className="gv-field">
-              <span>Категория номера</span>
-              <select value={form.category} onChange={update('category')}>
-                <option value="standard">Стандарт — 20 000 ₸</option>
-                <option value="deluxe">Делюкс — 30 000 ₸</option>
-                <option value="family">Семейный — 35 000 ₸</option>
-              </select>
-            </label>
-
-            <div className="gv-field-row">
-              <label className="gv-field">
-                <span>Дата заезда</span>
-                <input type="date" value={form.checkIn} onChange={update('checkIn')} />
-              </label>
-              <label className="gv-field">
-                <span>Дата выезда</span>
-                <input type="date" value={form.checkOut} onChange={update('checkOut')} />
-              </label>
-            </div>
-
-            <button type="submit" className="gv-btn-gold" disabled={status === 'loading'}>
-              {status === 'loading' ? (
-                <>
-                  <Loader2 size={18} className="gv-spin" /> Отправка...
-                </>
-              ) : (
-                'Забронировать'
+              <h3 className="font-serif text-2xl font-bold text-white">Заявка принята!</h3>
+              <p className="text-stone-300 text-sm max-w-md mx-auto">
+                Наш менеджер свяжется с вами по номеру <span className="text-amber-400 font-semibold">{form.phone}</span> для подтверждения детали брони.
+              </p>
+              <button 
+                onClick={() => setStatus('idle')}
+                className="mt-4 px-6 py-2.5 rounded-full border border-amber-500/50 text-amber-300 hover:bg-amber-500 hover:text-stone-900 text-xs uppercase font-semibold transition-all"
+              >
+                Забронировать еще
+              </button>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {errorMsg && (
+                <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-3">
+                  <AlertCircle size={18} className="shrink-0" />
+                  <span>{errorMsg}</span>
+                </div>
               )}
-            </button>
-          </form>
+
+              {targetRoomNumber && (
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2 font-medium">
+                  <CheckCircle2 size={16} />
+                  <span>Выбран конкретный номер: {targetRoomNumber}</span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-stone-300 mb-1 block">Ваше имя</label>
+                  <input 
+                    type="text" 
+                    value={form.name} 
+                    onChange={update('name')} 
+                    placeholder="Асель Нурланова" 
+                    className="w-full px-4 py-3 rounded-xl bg-stone-800/80 border border-stone-700 text-white placeholder-stone-500 text-sm focus:outline-none focus:border-amber-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-stone-300 mb-1 block">Номер телефона</label>
+                  <input 
+                    type="tel" 
+                    value={form.phone} 
+                    onChange={update('phone')} 
+                    placeholder="+7 707 000 00 00" 
+                    className="w-full px-4 py-3 rounded-xl bg-stone-800/80 border border-stone-700 text-white placeholder-stone-500 text-sm focus:outline-none focus:border-amber-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-stone-300 mb-1 block">Категория размещения</label>
+                <select 
+                  value={form.category} 
+                  onChange={update('category')}
+                  className="w-full px-4 py-3 rounded-xl bg-stone-800/80 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500 transition-colors"
+                >
+                  <option value="standard">Стандарт — 20 000 ₸ / ночь</option>
+                  <option value="deluxe">Делюкс — 30 000 ₸ / ночь</option>
+                  <option value="family">Семейный — 35 000 ₸ / ночь</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-stone-300 mb-1 block">Дата заезда</label>
+                  <input 
+                    type="date" 
+                    value={form.checkIn} 
+                    onChange={update('checkIn')} 
+                    className="w-full px-4 py-3 rounded-xl bg-stone-800/80 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-stone-300 mb-1 block">Дата выезда</label>
+                  <input 
+                    type="date" 
+                    value={form.checkOut} 
+                    onChange={update('checkOut')} 
+                    className="w-full px-4 py-3 rounded-xl bg-stone-800/80 border border-stone-700 text-white text-sm focus:outline-none focus:border-amber-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={status === 'loading'}
+                className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-bold text-sm tracking-wide transition-all shadow-lg shadow-amber-500/20 active:scale-98 flex items-center justify-center gap-2 mt-4"
+              >
+                {status === 'loading' ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>Отправка бронирования...</span>
+                  </>
+                ) : (
+                  <span>Забронировать номер</span>
+                )}
+              </button>
+            </form>
+          )}
         </div>
 
-        <ArchFrame className="gv-booking-arch" strokeClass="gv-stroke-gold-light">
-          <p className="gv-eyebrow">{HOTEL_NAME}</p>
-          <p className="gv-booking-arch-text">
-            Ждём вас в {HOTEL_CITY}е — городе, где хранится тысяча лет истории Великого Шёлкового пути.
-          </p>
-        </ArchFrame>
+        <div className="lg:col-span-5 hidden lg:block">
+          <ArchFrame className="bg-stone-800/40 border border-amber-500/20 rounded-2xl p-8 backdrop-blur-sm text-stone-300">
+            <h3 className="font-serif text-2xl font-bold text-amber-200 mb-4">{HOTEL_NAME}</h3>
+            <p className="text-sm leading-relaxed mb-6">
+              Мы обеспечим вам истинный южный комфорт и безупречный сервис во время вашего пребывания в {HOTEL_CITY}е.
+            </p>
+            <div className="space-y-3 text-xs text-stone-400">
+              <div className="flex items-center gap-3">
+                <Clock size={16} className="text-amber-400 shrink-0" />
+                <span>Заезд с 14:00, Выезд до 12:00</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Wifi size={16} className="text-amber-400 shrink-0" />
+                <span>Высокоскоростной Wi-Fi на всей территории</span>
+              </div>
+            </div>
+          </ArchFrame>
+        </div>
+
       </div>
     </section>
   );
 }
 
+/* =========================================================================
+   WHATSAPP & FOOTER
+   ========================================================================= */
+
 function WhatsAppWidget() {
-  const message = encodeURIComponent('Привет, Алия! Я хочу узнать насчет проживания...');
+  const message = encodeURIComponent('Здравствуйте! Поводу бронирования в Grand Villa...');
   const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="gv-whatsapp-fab">
-      <MessageCircle size={22} />
-      <span className="gv-whatsapp-fab-label">Спросить Алию</span>
+    <a 
+      href={href} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-xl shadow-emerald-950/20 transition-all duration-200 hover:scale-105"
+    >
+      <MessageCircle size={20} />
+      <span className="text-xs font-semibold hidden sm:inline">Связаться в WhatsApp</span>
     </a>
   );
 }
 
 function Footer() {
   return (
-    <footer id="footer" className="gv-footer">
-      <div className="gv-footer-arches">
-        {[0, 1, 2].map((i) => (
-          <svg key={i} viewBox="0 0 100 60" className="gv-footer-arch-svg" aria-hidden="true">
-            <path d="M6,58 L6,26 Q6,4 50,4 Q94,4 94,26 L94,58" fill="none" className="gv-stroke-gold" strokeWidth="1.5" />
-          </svg>
-        ))}
-      </div>
-      <div className="gv-footer-grid">
+    <footer id="footer" className="bg-stone-950 text-stone-400 py-12 px-6 border-t border-stone-800">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center pb-8 border-b border-stone-800/60">
         <div>
-          <p className="gv-wordmark-main">{HOTEL_NAME}</p>
-          <p className="gv-footer-muted">Ваш дом в сердце Туркестана {HOTEL_CITY}а</p>
+          <span className="font-serif font-bold text-2xl text-amber-100 uppercase block">{HOTEL_NAME}</span>
+          <p className="text-xs text-stone-500 mt-1">Комфорт и традиции гостеприимства в {HOTEL_CITY}е</p>
         </div>
-        <div className="gv-footer-contact">
-          <p><MapPin size={16} className="gv-stroke-gold-light" /> ул. Б.Саттарханова 55, {HOTEL_CITY}, Казахстан</p>
-          <p><Phone size={16} className="gv-stroke-gold-light" /> +7 707 454 16 96</p>
+        <div className="flex flex-col md:items-end gap-2 text-xs">
+          <p className="flex items-center gap-2"><MapPin size={14} className="text-amber-500" /> ул. Б.Саттарханова 55, {HOTEL_CITY}</p>
+          <p className="flex items-center gap-2"><Phone size={14} className="text-amber-500" /> +7 707 454 16 96</p>
         </div>
       </div>
-      <p className="gv-footer-copy">© {new Date().getFullYear()} {HOTEL_NAME}. Все права защищены.</p>
+      <div className="max-w-6xl mx-auto pt-6 text-center md:text-left text-[11px] text-stone-600">
+        © {new Date().getFullYear()} {HOTEL_NAME}. Все права защищены.
+      </div>
     </footer>
   );
 }
 
-function LandingPage({ onSelectRoom, selectedRoom }) {
-  // Реальная занятость номеров из Supabase: { '101': true, '202': false, ... }
+/* =========================================================================
+   QR ROOM SERVICE SCENARIO (QR-Сервис Номера)
+   ========================================================================= */
+
+function RoomScreen({ roomNumber, onExit }) {
+  const [activeService, setActiveService] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  return (
+    <div className="min-h-screen bg-stone-900 text-stone-100 relative pb-12">
+      <PatternBackground />
+      
+      {/* Topbar */}
+      <div className="p-4 border-b border-stone-800 bg-stone-950/80 backdrop-blur-md flex items-center justify-between sticky top-0 z-30">
+        <button onClick={onExit} className="flex items-center gap-2 text-xs text-stone-400 hover:text-amber-400 font-medium">
+          <ArrowLeft size={16} />
+          <span>На главный сайт</span>
+        </button>
+        <span className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-xs">
+          Номер {roomNumber}
+        </span>
+      </div>
+
+      <div className="max-w-xl mx-auto px-6 pt-8 space-y-8 relative z-10">
+        <ArchFrame className="bg-stone-800/40 border border-amber-500/20 rounded-2xl p-6 backdrop-blur-sm text-center">
+          <h1 className="font-serif text-2xl font-bold text-amber-200">Рум-сервис {HOTEL_NAME}</h1>
+          <p className="text-xs text-stone-400 mt-2">Выберите необходимую услугу, и мы доставим её в номер {roomNumber}.</p>
+        </ArchFrame>
+
+        {/* Grid услуг */}
+        <div className="grid grid-cols-2 gap-3">
+          {SERVICES.map((s) => {
+            const Icon = s.icon;
+            return (
+              <button
+                key={s.id}
+                onClick={() => setActiveService(s)}
+                className="p-4 rounded-xl bg-stone-800/60 border border-stone-700/60 hover:border-amber-500/50 hover:bg-stone-800 text-left transition-all flex flex-col justify-between h-28 group"
+              >
+                <Icon className="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-semibold text-stone-200">{s.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Инфо Панель */}
+        <div className="space-y-4">
+          <h3 className="font-serif text-lg font-bold text-amber-200 border-b border-stone-800 pb-2">Информация для гостя</h3>
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="p-3 bg-stone-800/40 rounded-xl border border-stone-800">
+              <Wifi size={16} className="text-amber-400 mb-1" />
+              <span className="text-stone-400 block text-[10px]">Wi-Fi Пароль</span>
+              <span className="font-semibold text-stone-200">{WIFI_PASSWORD}</span>
+            </div>
+            <div className="p-3 bg-stone-800/40 rounded-xl border border-stone-800">
+              <Clock size={16} className="text-amber-400 mb-1" />
+              <span className="text-stone-400 block text-[10px]">Время завтрака</span>
+              <span className="font-semibold text-stone-200">{BREAKFAST_TIME}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Модалки Услуг */}
+      <AnimatePresence>
+        {activeService && activeService.type === 'еда' ? (
+          <FoodModal 
+            roomNumber={roomNumber} 
+            onClose={() => setActiveService(null)} 
+            onDone={(t) => { setActiveService(null); setToast(t); }} 
+          />
+        ) : activeService ? (
+          <ConfirmModal 
+            service={activeService} 
+            roomNumber={roomNumber} 
+            onClose={() => setActiveService(null)} 
+            onDone={(t) => { setActiveService(null); setToast(t); }} 
+          />
+        ) : null}
+      </AnimatePresence>
+
+      <Toast toast={toast} onClose={() => setToast(null)} />
+    </div>
+  );
+}
+
+function ConfirmModal({ service, roomNumber, onClose, onDone }) {
+  const [comment, setComment] = useState('');
+  const [status, setStatus] = useState('idle');
+
+  const handleConfirm = async () => {
+    setStatus('loading');
+    const result = await apiPost('/api/orders', {
+      room_number: roomNumber,
+      service_type: service.type,
+      details: comment,
+    });
+    if (result.ok) {
+      onDone({ type: 'success', message: 'Запрос принят администратором!' });
+    } else {
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-stone-900 border border-stone-800 w-full max-w-sm rounded-2xl p-6 text-stone-100 relative">
+        <button onClick={onClose} className="absolute top-4 right-4 text-stone-500 hover:text-white"><X size={18} /></button>
+        <h3 className="font-serif text-xl font-bold mb-4">{service.label}</h3>
+        <textarea 
+          rows={3} 
+          value={comment} 
+          onChange={(e) => setComment(e.target.value)} 
+          placeholder="Уточнения к запросу..." 
+          className="w-full p-3 rounded-xl bg-stone-800 border border-stone-700 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-500 mb-4"
+        />
+        <button 
+          onClick={handleConfirm} 
+          disabled={status === 'loading'}
+          className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs uppercase tracking-wider transition-colors"
+        >
+          {status === 'loading' ? 'Отправка...' : 'Подтвердить'}
+        </button>
+      </motion.div>
+    </div>
+  );
+}
+
+function FoodModal({ roomNumber, onClose, onDone }) {
+  const [cart, setCart] = useState({});
+  const [status, setStatus] = useState('idle');
+
+  const changeQty = (id, delta) => {
+    setCart(prev => {
+      const current = prev[id] || 0;
+      const updated = Math.max(0, current + delta);
+      if (updated === 0) {
+        const copy = { ...prev };
+        delete copy[id];
+        return copy;
+      }
+      return { ...prev, [id]: updated };
+    });
+  };
+
+  const total = Object.entries(cart).reduce((sum, [id, qty]) => {
+    const item = FOOD_MENU.find(f => f.id === id);
+    return sum + (item ? item.price * qty : 0);
+  }, 0);
+
+  const handleOrder = async () => {
+    if (total === 0) return;
+    setStatus('loading');
+    const details = Object.entries(cart).map(([id, qty]) => {
+      const item = FOOD_MENU.find(f => f.id === id);
+      return `${item.name} x${qty}`;
+    }).join(', ');
+
+    const result = await apiPost('/api/orders', {
+      room_number: roomNumber,
+      service_type: 'еда',
+      details,
+    });
+
+    if (result.ok) {
+      onDone({ type: 'success', message: 'Заказ успешно передан на кухню!' });
+    } else {
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-stone-900 border border-stone-800 w-full max-w-md rounded-2xl p-6 text-stone-100 relative max-h-[85vh] flex flex-col">
+        <button onClick={onClose} className="absolute top-4 right-4 text-stone-500 hover:text-white"><X size={18} /></button>
+        <h3 className="font-serif text-xl font-bold mb-4">Меню кухни</h3>
+        
+        <div className="overflow-y-auto space-y-3 flex-1 pr-1 mb-4">
+          {FOOD_MENU.map(item => (
+            <div key={item.id} className="p-3 bg-stone-800/40 border border-stone-800 rounded-xl flex items-center justify-between text-xs">
+              <div>
+                <span className="font-semibold block">{item.name}</span>
+                <span className="text-amber-400 font-medium">{formatTenge(item.price)}</span>
+              </div>
+              <div className="flex items-center gap-2 bg-stone-800 rounded-lg p-1 border border-stone-700">
+                <button onClick={() => changeQty(item.id, -1)} className="p-1 hover:text-amber-400"><Minus size={12} /></button>
+                <span className="w-4 text-center font-bold">{cart[item.id] || 0}</span>
+                <button onClick={() => changeQty(item.id, 1)} className="p-1 hover:text-amber-400"><Plus size={12} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="pt-4 border-t border-stone-800 flex items-center justify-between">
+          <div>
+            <span className="text-[10px] text-stone-400 block">Итого к оплате</span>
+            <span className="text-lg font-bold text-amber-400">{formatTenge(total)}</span>
+          </div>
+          <button 
+            disabled={total === 0 || status === 'loading'}
+            onClick={handleOrder}
+            className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-stone-950 font-bold text-xs uppercase transition-colors"
+          >
+            {status === 'loading' ? 'Оформляем...' : 'Заказать'}
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   РОУТИНГ И ВХОДНАЯ ТОЧКА
+   ========================================================================= */
+
+function parseRoute(pathname) {
+  const match = pathname.match(/^\/room\/([a-zA-Z0-9-]+)\/?$/);
+  if (match) return { mode: 'room', roomNumber: match[1] };
+  return { mode: 'landing', roomNumber: null };
+}
+
+export default function GrandVillaPortal() {
+  const [route, setRoute] = useState(() => parseRoute(window.location.pathname));
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [roomsAvailability, setRoomsAvailability] = useState({});
+
+  useEffect(() => {
+    const onPopState = () => setRoute(parseRoute(window.location.pathname));
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   const loadAvailability = async () => {
     const result = await apiGet('/api/rooms/availability');
@@ -734,920 +1118,9 @@ function LandingPage({ onSelectRoom, selectedRoom }) {
       }
       setRoomsAvailability(map);
     }
-    // Если backend недоступен — просто оставляем предыдущее состояние
-    // (RoomsGrid сам подстрахуется захардкоженным isAvailable для номеров без данных)
   };
 
-  useEffect(() => {
-    loadAvailability();
-  }, []);
-
-  // Вызывается из BookingForm сразу после успешной брони —
-  // мгновенно помечаем номер занятым, не дожидаясь следующего опроса
-  const handleBookingSuccess = (roomNumber) => {
-    setRoomsAvailability((prev) => ({ ...prev, [roomNumber]: false }));
-    // Плюс подстраховочно перезапрашиваем актуальные данные с backend
-    loadAvailability();
-  };
-
-  return (
-    <div className="gv-page">
-      <Header onBookClick={() => onSelectRoom({ category: selectedRoom?.category || 'standard', roomNumber: null })} />
-      <Hero onBookClick={() => onSelectRoom({ category: selectedRoom?.category || 'standard', roomNumber: null })} />
-      <RoomsGrid onSelectRoom={onSelectRoom} roomsAvailability={roomsAvailability} />
-      <BookingForm selectedRoom={selectedRoom} onBookingSuccess={handleBookingSuccess} />
-      <Footer />
-      <WhatsAppWidget />
-    </div>
-  );
-}
-
-/* =========================================================================
-   СЦЕНАРИЙ 2 — QR РУМ-СЕРВИС
-   ========================================================================= */
-
-function RoomTopBar({ roomNumber, onExit }) {
-  return (
-    <div className="gv-room-topbar">
-      <button className="gv-room-back" onClick={onExit}>
-        <ArrowLeft size={18} /> {HOTEL_NAME}
-      </button>
-      <span className="gv-room-badge">Номер {roomNumber}</span>
-    </div>
-  );
-}
-
-function RoomWelcome({ roomNumber }) {
-  return (
-    <ArchFrame className="gv-room-welcome-arch">
-      <p className="gv-eyebrow">{HOTEL_NAME}</p>
-      <h1 className="gv-room-welcome-title">Добро пожаловать в номер {roomNumber}!</h1>
-      <p className="gv-room-welcome-text">Выберите услугу ниже — мы отреагируем в течение нескольких минут.</p>
-    </ArchFrame>
-  );
-}
-
-function ServiceGrid({ onSelect }) {
-  return (
-    <div className="gv-service-grid">
-      {SERVICES.map((s) => {
-        const Icon = s.icon;
-        return (
-          <button key={s.id} className="gv-service-btn" onClick={() => onSelect(s)}>
-            <Icon size={28} className="gv-stroke-gold" />
-            <span>{s.label}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-function RoomInfoPanel() {
-  return (
-    <div className="gv-info-panel">
-      <div className="gv-info-grid">
-        <div className="gv-info-card">
-          <Wifi size={22} className="gv-stroke-gold" />
-          <div>
-            <p className="gv-info-label">Wi-Fi</p>
-            <p className="gv-info-value">Пароль: {WIFI_PASSWORD}</p>
-          </div>
-        </div>
-        <div className="gv-info-card">
-          <Clock size={22} className="gv-stroke-gold" />
-          <div>
-            <p className="gv-info-label">Завтрак</p>
-            <p className="gv-info-value">{BREAKFAST_TIME}</p>
-          </div>
-        </div>
-        <div className="gv-info-card">
-          <Ban size={22} className="gv-stroke-gold" />
-          <div>
-            <p className="gv-info-label">Курение</p>
-            <p className="gv-info-value">Запрещено в номерах</p>
-          </div>
-        </div>
-        <div className="gv-info-card">
-          <ShieldAlert size={22} className="gv-stroke-gold" />
-          <div>
-            <p className="gv-info-label">Безопасность</p>
-            <p className="gv-info-value">При ЧС или подозрительной ситуации сразу звоните на ресепшен.</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="gv-rules-block">
-        <h3 className="gv-rules-title">Правила проживания</h3>
-        <ul className="gv-rules-list">
-          {HOUSE_RULES.map((rule, i) => (
-            <li key={i}>{rule}</li>
-          ))}
-        </ul>
-
-        <h3 className="gv-rules-title">Штрафы за нарушения</h3>
-        <ul className="gv-penalty-list">
-          {PENALTIES.map((p, i) => (
-            <li key={i}>
-              <span>{p.title}</span>
-              <strong>{p.amount ? formatTenge(p.amount) : p.note}</strong>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-function ConfirmModal({ service, roomNumber, onClose, onDone }) {
-  const [comment, setComment] = useState('');
-  const [status, setStatus] = useState('idle'); // idle | loading | error
-
-  const handleConfirm = async () => {
-    setStatus('loading');
-    const result = await apiPost('/api/orders', {
-      room_number: roomNumber,
-      service_type: service.type,
-      details: comment,
-    });
-    if (result.ok) {
-      onDone({ type: 'success', message: 'Ваш запрос принят! Администратор уже спешит к вам. Уведомление отправлено на ресепшен.' });
-    } else {
-      setStatus('error');
-    }
-  };
-
-  return (
-    <div className="gv-modal-backdrop" onClick={onClose}>
-      <div className="gv-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="gv-modal-close" onClick={onClose} aria-label="Закрыть">
-          <X size={20} />
-        </button>
-        <service.icon size={30} className="gv-stroke-gold" />
-        <h3 className="gv-modal-title">{service.label}</h3>
-        <label className="gv-field">
-          <span>Комментарий (необязательно)</span>
-          <textarea
-            rows={3}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Например: утюг нужен срочно"
-          />
-        </label>
-
-        {status === 'error' && (
-          <div className="gv-form-error">
-            <AlertCircle size={16} />
-            <span>Не удалось отправить запрос. Попробуйте ещё раз.</span>
-          </div>
-        )}
-
-        <button className="gv-btn-gold" onClick={handleConfirm} disabled={status === 'loading'}>
-          {status === 'loading' ? (
-            <>
-              <Loader2 size={18} className="gv-spin" /> Отправка...
-            </>
-          ) : (
-            'Отправить запрос'
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function FoodMenuModal({ roomNumber, onClose, onDone }) {
-  const [cart, setCart] = useState({});
-  const [comment, setComment] = useState('');
-  const [status, setStatus] = useState('idle');
-
-  const changeQty = (id, delta) => {
-    setCart((c) => {
-      const next = { ...c, [id]: Math.max(0, (c[id] || 0) + delta) };
-      if (next[id] === 0) delete next[id];
-      return next;
-    });
-  };
-
-  const items = Object.entries(cart).map(([id, qty]) => {
-    const menuItem = FOOD_MENU.find((f) => f.id === id);
-    return { ...menuItem, qty };
-  });
-  const total = items.reduce((sum, i) => sum + i.price * i.qty, 0);
-
-  const handleConfirm = async () => {
-    if (items.length === 0) return;
-    setStatus('loading');
-    const details = items.map((i) => `${i.name} x${i.qty}`).join(', ') + (comment ? ` | Комментарий: ${comment}` : '');
-    const result = await apiPost('/api/orders', {
-      room_number: roomNumber,
-      service_type: 'еда',
-      details,
-    });
-    if (result.ok) {
-      onDone({ type: 'success', message: 'Ваш заказ принят! Администратор уже спешит к вам. Уведомление отправлено на ресепшен.' });
-    } else {
-      setStatus('error');
-    }
-  };
-
-  return (
-    <div className="gv-modal-backdrop" onClick={onClose}>
-      <div className="gv-modal gv-modal-wide" onClick={(e) => e.stopPropagation()}>
-        <button className="gv-modal-close" onClick={onClose} aria-label="Закрыть">
-          <X size={20} />
-        </button>
-        <UtensilsCrossed size={30} className="gv-stroke-gold" />
-        <h3 className="gv-modal-title">Menu кухни пока недоступно</h3>
-
-        <div className="gv-food-list">
-          {FOOD_MENU.map((item) => (
-            <div key={item.id} className="gv-food-row">
-              <div>
-                <p className="gv-food-name">{item.name}</p>
-                <p className="gv-food-price">{formatTenge(item.price)}</p>
-              </div>
-              <div className="gv-qty-control">
-                <button onClick={() => changeQty(item.id, -1)} aria-label="Убрать одну порцию">
-                  <Minus size={14} />
-                </button>
-                <span>{cart[item.id] || 0}</span>
-                <button onClick={() => changeQty(item.id, 1)} aria-label="Добавить одну порцию">
-                  <Plus size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <label className="gv-field">
-          <span>Комментарий (например: борщ без лука)</span>
-          <textarea rows={2} value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Пожелания к заказу" />
-        </label>
-
-        {status === 'error' && (
-          <div className="gv-form-error">
-            <AlertCircle size={16} />
-            <span>Не удалось отправить заказ. Попробуйте ещё раз.</span>
-          </div>
-        )}
-
-        <div className="gv-food-footer">
-          <span className="gv-food-total">Итого: {formatTenge(total)}</span>
-          <button className="gv-btn-gold" onClick={handleConfirm} disabled={status === 'loading' || items.length === 0}>
-            {status === 'loading' ? (
-              <>
-                <Loader2 size={18} className="gv-spin" /> Отправка...
-              </>
-            ) : (
-              'Оформить заказ'
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function RoomScreen({ roomNumber, onExit }) {
-  const [activeService, setActiveService] = useState(null);
-  const [toast, setToast] = useState(null);
-
-  const handleDone = (toastPayload) => {
-    setActiveService(null);
-    setToast(toastPayload);
-  };
-
-  return (
-    <div className="gv-page gv-page-room">
-      <StarPatternBg className="gv-room-bg" />
-      <RoomTopBar roomNumber={roomNumber} onExit={onExit} />
-      <div className="gv-room-inner">
-        <RoomWelcome roomNumber={roomNumber} />
-        <ServiceGrid onSelect={setActiveService} />
-        <RoomInfoPanel />
-      </div>
-
-      {activeService && activeService.type === 'еда' && (
-        <FoodMenuModal roomNumber={roomNumber} onClose={() => setActiveService(null)} onDone={handleDone} />
-      )}
-      {activeService && activeService.type !== 'еда' && (
-        <ConfirmModal service={activeService} roomNumber={roomNumber} onClose={() => setActiveService(null)} onDone={handleDone} />
-      )}
-
-      <Toast toast={toast} onClose={() => setToast(null)} />
-    </div>
-  );
-}
-
-/* =========================================================================
-   МАРШРУТИЗАЦИЯ БЕЗ react-router
-   Определяет режим по window.location.pathname: "/room/:number" -> QR-режим
-   ========================================================================= */
-
-function parseRoute(pathname) {
-  const match = pathname.match(/^\/room\/([a-zA-Z0-9-]+)\/?$/);
-  if (match) {
-    return { mode: 'room', roomNumber: match[1] };
-  }
-  return { mode: 'landing', roomNumber: null };
-}
-
-
-
-/* =========================================================================
-   ГЛОБАЛЬНЫЕ СТИЛИ (токены дизайна)
-   ========================================================================= */
-
-function GlobalStyles() {
-  return (
-    <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
-
-      .gv-root {
-        --cream: #F7F1E4;
-        --cream-deep: #ECE0C7;
-        --charcoal: #24221E;
-        --charcoal-soft: #57514A;
-        --gold: #B8872F;
-        --gold-light: #DCB463;
-        --teal: #1E6B63;
-        font-family: 'Manrope', sans-serif;
-        color: var(--charcoal);
-        background: var(--cream);
-        position: relative;
-      }
-
-      .gv-root * { box-sizing: border-box; }
-
-      .gv-page { display: flex; flex-direction: column; min-height: 100vh; position: relative; }
-
-      .gv-eyebrow {
-        font-family: 'Manrope', sans-serif;
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: var(--gold-light);
-        margin: 0 0 0.5rem 0;
-      }
-      .gv-eyebrow-dark { color: var(--gold); }
-
-      .gv-stroke-gold { stroke: var(--gold); color: var(--gold); }
-      .gv-stroke-gold-light { stroke: var(--gold-light); color: var(--gold-light); }
-      .gv-fill-gold { fill: var(--gold); }
-
-      /* ---------- Header ---------- */
-      .gv-header {
-        position: sticky; top: 0; z-index: 40;
-        background: var(--cream);
-        border-bottom: 1px solid rgba(184,135,47,0.25);
-      }
-      .gv-header-inner {
-        max-width: 1180px; margin: 0 auto; padding: 0.9rem 1.5rem;
-        display: flex; align-items: center; justify-content: space-between;
-      }
-      .gv-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
-      .gv-wordmark-main {
-        font-family: 'Cormorant Garamond', serif; font-weight: 700;
-        font-size: 1.5rem; letter-spacing: 0.03em; color: var(--charcoal);
-      }
-      .gv-wordmark-sub {
-        font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gold);
-      }
-      .gv-nav-desktop { display: none; align-items: center; gap: 2rem; }
-      .gv-nav-link { font-size: 0.9rem; color: var(--charcoal-soft); text-decoration: none; }
-      .gv-nav-link:hover { color: var(--gold); }
-      .gv-nav-toggle { background: none; border: none; color: var(--charcoal); cursor: pointer; }
-      .gv-nav-mobile { display: flex; flex-direction: column; gap: 1rem; padding: 1rem 1.5rem 1.5rem; border-top: 1px solid rgba(184,135,47,0.2); }
-
-      @media (min-width: 860px) {
-        .gv-nav-desktop { display: flex; }
-        .gv-nav-toggle { display: none; }
-        .gv-nav-mobile { display: none; }
-      }
-
-      /* ---------- Buttons ---------- */
-      .gv-btn-gold, .gv-btn-gold-sm {
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        background: var(--gold); color: var(--cream); border: none;
-        font-weight: 600; cursor: pointer; border-radius: 2px;
-        transition: background 0.2s ease, transform 0.15s ease;
-      }
-      .gv-btn-gold { padding: 0.9rem 1.8rem; font-size: 0.95rem; width: 100%; }
-      .gv-btn-gold-sm { padding: 0.55rem 1.2rem; font-size: 0.85rem; }
-      .gv-btn-gold:hover, .gv-btn-gold-sm:hover { background: #A0761F; }
-      .gv-btn-gold:disabled { opacity: 0.6; cursor: not-allowed; }
-
-      .gv-btn-outline {
-        margin-top: 1rem; width: 100%; padding: 0.75rem 1.2rem;
-        background: transparent; border: 1px solid var(--gold); color: var(--gold);
-        font-weight: 600; cursor: pointer; border-radius: 2px; transition: all 0.2s ease;
-      }
-      .gv-btn-outline:hover { background: var(--gold); color: var(--cream); }
-
-      .gv-btn-outline-light {
-        margin-top: 1rem; padding: 0.7rem 1.4rem; background: transparent;
-        border: 1px solid var(--gold-light); color: var(--gold-light);
-        font-weight: 600; cursor: pointer; border-radius: 2px;
-      }
-      .gv-btn-outline-light:hover { background: var(--gold-light); color: var(--charcoal); }
-
-      /* ---------- Hero ---------- */
-      .gv-hero {
-        position: relative; background: var(--charcoal); color: var(--cream);
-        padding: 4rem 1.5rem 5rem; overflow: hidden;
-      }
-      .gv-hero-bg { position: absolute; inset: 0; color: var(--gold-light); opacity: 0.05; }
-      .gv-hero-inner { position: relative; max-width: 640px; margin: 0 auto; }
-      .gv-hero-arch { --arch-color: var(--gold); }
-      .gv-hero-title {
-        font-family: 'Cormorant Garamond', serif; font-weight: 700;
-        font-size: clamp(2.4rem, 6vw, 3.6rem); margin: 0 0 1rem; color: var(--cream);
-      }
-      .gv-hero-subtitle { color: #D9D2C4; font-size: 1rem; line-height: 1.6; margin-bottom: 1.8rem; }
-
-      /* ---------- Arch frame ---------- */
-      .gv-arch-wrap { position: relative; text-align: center; padding: 3.2rem 1.8rem 2.4rem; }
-      .gv-arch-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-      .gv-arch-content { position: relative; z-index: 1; }
-
-      /* ---------- Sections ---------- */
-      .gv-section { padding: 4.5rem 1.5rem; }
-      .gv-section-cream { background: var(--cream-deep); }
-      .gv-section-charcoal { background: var(--charcoal); color: var(--cream); }
-      .gv-section-title {
-        font-family: 'Cormorant Garamond', serif; font-weight: 600;
-        font-size: clamp(1.8rem, 4vw, 2.4rem); max-width: 1180px; margin: 0 auto 2.5rem;
-      }
-      .gv-section-title-light { color: var(--cream); margin-bottom: 1.8rem; }
-      .gv-section > .gv-eyebrow, .gv-section-title { max-width: 1180px; margin-left: auto; margin-right: auto; }
-
-      /* ---------- Улучшенные контейнеры номеров (Rooms Grid) ---------- */
-      .gv-rooms-container {
-        max-width: 1180px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-      
-      .gv-category-card {
-        background: #fff;
-        border: 1px solid rgba(184, 135, 47, 0.25);
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(36, 34, 30, 0.05);
-        transition: border-color 0.2s ease;
-      }
-      .gv-category-card:hover {
-        border-color: var(--gold);
-      }
-
-      .gv-category-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.5rem;
-        cursor: pointer;
-        background: #fff;
-        user-select: none;
-        transition: background 0.15s ease;
-      }
-      .gv-category-header:hover {
-        background: #FAF8F5;
-      }
-
-      .gv-category-header-left {
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-      }
-      .gv-category-icon {
-        font-size: 2rem;
-      }
-      .gv-category-title {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0;
-        color: var(--charcoal);
-      }
-      .gv-category-subtitle {
-        margin: 0.2rem 0 0 0;
-        font-size: 0.85rem;
-        color: var(--charcoal-soft);
-      }
-      .gv-category-price {
-        font-weight: 700;
-        color: var(--gold);
-        font-size: 1.2rem;
-        text-align: right;
-      }
-      .gv-category-price-unit {
-        font-size: 0.75rem;
-        color: var(--charcoal-soft);
-        font-weight: 500;
-        margin-left: 0.25rem;
-      }
-
-      .gv-rooms-list {
-        padding: 0 1.5rem 1.5rem 1.5rem;
-        border-top: 1px solid rgba(184, 135, 47, 0.15);
-        background: #FCFAF6;
-      }
-      .gv-category-desc {
-        color: var(--charcoal-soft);
-        font-size: 0.95rem;
-        line-height: 1.6;
-        margin: 1.2rem 0;
-      }
-
-      .gv-rooms-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.2rem;
-        max-height: 480px;
-        overflow-y: auto;
-        padding: 0.5rem;
-      }
-      @media (min-width: 640px) {
-        .gv-rooms-grid { grid-template-columns: repeat(2, 1fr); }
-      }
-      @media (min-width: 1024px) {
-        .gv-rooms-grid { grid-template-columns: repeat(3, 1fr); }
-      }
-
-      .gv-room-item {
-        background: #fff;
-        border: 1px solid rgba(184, 135, 47, 0.2);
-        border-radius: 6px;
-        padding: 1.2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        cursor: pointer;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-      }
-      .gv-room-item:hover:not(.gv-room-unavailable) {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(184, 135, 47, 0.1);
-        border-color: var(--gold);
-      }
-      .gv-room-unavailable {
-        opacity: 0.65;
-        cursor: not-allowed;
-        background: #F3F1ED;
-      }
-
-      .gv-room-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(184, 135, 47, 0.1);
-        padding-bottom: 0.6rem;
-      }
-      .gv-room-number {
-        font-weight: 700;
-        color: var(--charcoal);
-      }
-      .gv-room-status {
-        font-size: 0.75rem;
-        font-weight: 600;
-      }
-
-      .gv-room-details {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-        font-size: 0.85rem;
-        color: var(--charcoal-soft);
-      }
-      .gv-room-detail-item {
-        display: flex;
-        justify-content: space-between;
-      }
-      .gv-room-detail-label {
-        font-weight: 600;
-        color: var(--charcoal);
-      }
-
-      .gv-room-amenities {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem;
-        margin-top: auto;
-      }
-      .gv-amenity-tag {
-        font-size: 0.7rem;
-        font-weight: 600;
-        background: #F4EFE5;
-        color: var(--charcoal-soft);
-        padding: 0.2rem 0.5rem;
-        border-radius: 4px;
-      }
-      .gv-amenity-more {
-        background: var(--gold);
-        color: #fff;
-      }
-
-      .gv-room-book-btn {
-        width: 100%;
-        margin-top: 0.5rem;
-      }
-
-      /* Модалка с деталями номера */
-      .gv-modal-room-details {
-        max-width: 500px !important;
-      }
-      .gv-room-detail-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        border-bottom: 1px solid rgba(184, 135, 47, 0.2);
-        padding-bottom: 0.8rem;
-        margin-top: 0.5rem;
-      }
-      .gv-room-detail-number {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--charcoal);
-      }
-      .gv-room-detail-price {
-        font-weight: 700;
-        color: var(--gold);
-      }
-      .gv-room-detail-body {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        margin: 0.5rem 0;
-      }
-      .gv-room-detail-grid {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 1rem;
-        font-size: 0.9rem;
-      }
-      .gv-room-detail-info p {
-        margin: 0 0 0.5rem 0;
-        color: var(--charcoal-soft);
-      }
-      .gv-room-detail-info strong {
-        color: var(--charcoal);
-      }
-      .gv-room-detail-amenities p {
-        margin: 0 0 0.4rem 0;
-        font-weight: 700;
-      }
-      .gv-room-detail-amenities ul {
-        margin: 0;
-        padding-left: 0.5rem;
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-        color: var(--charcoal-soft);
-      }
-      .gv-room-detail-features p {
-        margin: 0 0 0.5rem 0;
-        font-weight: 700;
-      }
-      .gv-feature-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-      .gv-feature-tag {
-        font-size: 0.8rem;
-        font-weight: 600;
-        background: #FCFAF6;
-        border: 1px solid rgba(184, 135, 47, 0.25);
-        color: var(--gold);
-        padding: 0.3rem 0.6rem;
-        border-radius: 4px;
-      }
-      .gv-room-detail-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-        margin-top: 0.5rem;
-      }
-      .gv-room-detail-actions button {
-        margin: 0;
-      }
-
-      /* ---------- ВОССТАНОВЛЕННЫЕ СТИЛИ ДЛЯ БРОНИРОВАНИЯ (Booking Form) ---------- */
-      .gv-booking-grid {
-        max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2.5rem;
-      }
-      @media (min-width: 900px) { .gv-booking-grid { grid-template-columns: 1.1fr 0.9fr; align-items: center; } }
-      
-      .gv-form { display: flex; flex-direction: column; gap: 1rem; max-width: 480px; }
-      
-      .gv-field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: #D9D2C4; flex: 1; }
-      .gv-section-cream .gv-field { color: var(--charcoal-soft); }
-      
-      .gv-field input, .gv-field select, .gv-field textarea {
-        padding: 0.7rem 0.85rem; border: 1px solid rgba(184,135,47,0.4); background: rgba(255,255,255,0.05);
-        color: #fff; font-family: inherit; font-size: 0.95rem; border-radius: 2px; width: 100%;
-      }
-      .gv-section-cream .gv-field input, .gv-section-cream .gv-field select, .gv-section-cream .gv-field textarea {
-        background: var(--cream); color: var(--charcoal);
-      }
-      .gv-field input:focus, .gv-field select:focus, .gv-field textarea:focus {
-        outline: 2px solid var(--gold); outline-offset: 1px;
-      }
-      .gv-field-row { display: flex; gap: 1rem; width: 100%; }
-      .gv-field-row .gv-field { min-width: 0; }
-
-      .gv-field select option {
-        background: var(--charcoal);
-        color: #fff;
-      }
-
-      .gv-form-error {
-        display: flex; align-items: flex-start; gap: 0.5rem; background: rgba(200,60,60,0.12);
-        border: 1px solid rgba(200,60,60,0.4); color: #E29999; padding: 0.7rem 0.9rem;
-        font-size: 0.85rem; border-radius: 2px;
-      }
-
-      .gv-form-notice {
-        display: flex; align-items: center; gap: 0.5rem; background: rgba(184,135,47,0.15);
-        border: 1px solid rgba(184,135,47,0.4); color: var(--gold-light); padding: 0.6rem 0.9rem;
-        font-size: 0.85rem; font-weight: 600; border-radius: 2px;
-      }
-
-      /* ---------- Booking success styling ---------- */
-      .gv-booking-success {
-        max-width: 480px; margin: 0 auto; text-align: center; display: flex;
-        flex-direction: column; align-items: center; gap: 0.6rem;
-      }
-      .gv-booking-success h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; margin: 0; color: var(--cream); }
-      .gv-booking-success p { color: #D9D2C4; }
-
-      /* ---------- WhatsApp widget ---------- */
-      .gv-whatsapp-fab {
-        position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 50;
-        display: flex; align-items: center; gap: 0.5rem;
-        background: var(--teal); color: #fff; padding: 0.85rem 1.1rem; border-radius: 999px;
-        text-decoration: none; box-shadow: 0 8px 24px rgba(0,0,0,0.25); font-size: 0.85rem; font-weight: 600;
-        transition: transform 0.15s ease;
-      }
-      .gv-whatsapp-fab:hover { transform: translateY(-2px); }
-      .gv-whatsapp-fab-label { display: none; }
-      @media (min-width: 640px) { .gv-whatsapp-fab-label { display: inline; } }
-
-      /* ---------- Footer ---------- */
-      .gv-footer { background: var(--charcoal); color: var(--cream); padding: 2.5rem 1.5rem 1.5rem; text-align: center; }
-      .gv-footer-arches { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; opacity: 0.7; }
-      .gv-footer-arch-svg { width: 50px; height: 30px; }
-      .gv-footer-grid {
-        max-width: 720px; margin: 0 auto 1.5rem; display: flex; flex-direction: column; gap: 1rem;
-        align-items: center; text-align: center;
-      }
-      @media (min-width: 640px) { .gv-footer-grid { flex-direction: row; justify-content: space-between; text-align: left; } }
-      .gv-footer-muted { color: #B8B0A2; font-size: 0.85rem; margin-top: 0.2rem; }
-      .gv-footer-contact { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; color: #D9D2C4; }
-      .gv-footer-contact p { display: flex; align-items: center; gap: 0.4rem; margin: 0; justify-content: center; }
-      @media (min-width: 640px) { .gv-footer-contact p { justify-content: flex-start; } }
-      .gv-footer-copy { font-size: 0.72rem; color: #8A8477; border-top: 1px solid rgba(184,135,47,0.2); padding-top: 1.2rem; }
-
-      /* ---------- Room / QR screen ---------- */
-      .gv-page-room { background: var(--cream); position: relative; }
-      .gv-room-bg { position: absolute; inset: 0; color: var(--gold); opacity: 0.06; pointer-events: none; }
-      .gv-room-topbar {
-        position: relative; display: flex; align-items: center; justify-content: space-between;
-        padding: 1rem 1.3rem; border-bottom: 1px solid rgba(184,135,47,0.25);
-      }
-      .gv-room-back {
-        display: flex; align-items: center; gap: 0.4rem; background: none; border: none;
-        color: var(--charcoal-soft); font-size: 0.85rem; cursor: pointer; font-weight: 600;
-      }
-      .gv-room-badge {
-        background: var(--gold); color: var(--cream); font-size: 0.75rem; font-weight: 700;
-        padding: 0.35rem 0.8rem; border-radius: 999px; letter-spacing: 0.05em;
-      }
-      .gv-room-inner { position: relative; max-width: 560px; margin: 0 auto; padding: 1.5rem 1.3rem 3rem; }
-      .gv-room-welcome-title {
-        font-family: 'Cormorant Garamond', serif; font-weight: 700;
-        font-size: clamp(1.6rem, 5vw, 2.1rem); margin: 0 0 0.6rem;
-      }
-      .gv-room-welcome-text { color: var(--charcoal-soft); font-size: 0.95rem; }
-
-      .gv-service-grid {
-        display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.9rem; margin-top: 2rem;
-      }
-      .gv-service-btn {
-        display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
-        background: var(--cream); border: 1px solid rgba(184,135,47,0.3); padding: 1.4rem 0.8rem;
-        cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--charcoal); text-align: center;
-        transition: border-color 0.15s ease, transform 0.15s ease;
-      }
-      .gv-service-btn:hover { border-color: var(--gold); transform: translateY(-2px); }
-
-      .gv-info-panel { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.6rem; }
-      .gv-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
-      @media (max-width: 420px) { .gv-info-grid { grid-template-columns: 1fr; } }
-      .gv-info-card {
-        display: flex; gap: 0.65rem; align-items: flex-start; background: #fff;
-        border: 1px solid rgba(184,135,47,0.25); padding: 0.9rem; border-radius: 6px;
-      }
-      .gv-info-label { margin: 0; font-weight: 700; font-size: 0.8rem; color: var(--charcoal); }
-      .gv-info-value { margin: 0.2rem 0 0; font-size: 0.78rem; color: var(--charcoal-soft); line-height: 1.4; }
-
-      .gv-rules-block { border-top: 1px solid rgba(184,135,47,0.25); padding-top: 1.3rem; }
-      .gv-rules-title {
-        font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; margin: 0 0 0.7rem;
-      }
-      .gv-rules-title + .gv-penalty-list { margin-top: 0; }
-      .gv-rules-list {
-        margin: 0 0 1.4rem; padding-left: 1.1rem; display: flex; flex-direction: column;
-        gap: 0.45rem; font-size: 0.85rem; color: var(--charcoal-soft);
-      }
-      .gv-penalty-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; }
-      .gv-penalty-list li {
-        display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
-        font-size: 0.83rem; color: var(--charcoal-soft); border-bottom: 1px dashed rgba(184,135,47,0.25);
-        padding-bottom: 0.45rem;
-      }
-      .gv-penalty-list li strong { color: #8A3A3A; font-weight: 700; text-align: right; flex-shrink: 0; max-width: 55%; }
-
-      /* ---------- Modal ---------- */
-      .gv-modal-backdrop {
-        position: fixed; inset: 0; background: rgba(36,34,30,0.6); z-index: 60;
-        display: flex; align-items: flex-end; justify-content: center; padding: 0;
-      }
-      @media (min-width: 640px) { .gv-modal-backdrop { align-items: center; padding: 1rem; } }
-      .gv-modal {
-        position: relative; background: var(--cream); width: 100%; max-width: 460px;
-        padding: 2rem 1.6rem 1.6rem; border-radius: 8px 8px 0 0; display: flex; flex-direction: column; gap: 0.9rem;
-        max-height: 88vh; overflow-y: auto;
-      }
-      @media (min-width: 640px) { .gv-modal { border-radius: 8px; } }
-      .gv-modal-wide { max-width: 540px; }
-      .gv-modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; cursor: pointer; color: var(--charcoal-soft); }
-      .gv-modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; margin: 0.2rem 0 0; }
-
-      .gv-food-list { display: flex; flex-direction: column; gap: 0.6rem; max-height: 260px; overflow-y: auto; padding-right: 0.2rem; }
-      .gv-food-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(184,135,47,0.15); padding-bottom: 0.5rem; }
-      .gv-food-name { margin: 0; font-size: 0.9rem; font-weight: 600; }
-      .gv-food-price { margin: 0; font-size: 0.8rem; color: var(--charcoal-soft); }
-      .gv-qty-control { display: flex; align-items: center; gap: 0.6rem; }
-      .gv-qty-control button {
-        width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--gold); background: none;
-        color: var(--gold); display: flex; align-items: center; justify-content: center; cursor: pointer;
-      }
-      .gv-food-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.4rem; }
-      .gv-food-total { font-weight: 700; }
-      .gv-food-footer .gv-btn-gold { width: auto; padding: 0.7rem 1.4rem; }
-
-      /* ---------- Toast ---------- */
-      .gv-toast {
-        position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 70;
-        display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1.2rem; border-radius: 8px;
-        font-size: 0.85rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: 90vw;
-      }
-      .gv-toast-success { background: #2A5C46; color: #E7F5EC; }
-      .gv-toast-error { background: #5C2A2A; color: #F5E7E7; }
-
-      /* ---------- Misc ---------- */
-      .gv-spin { animation: gv-spin 1s linear infinite; }
-      @keyframes gv-spin { to { transform: rotate(360deg); } }
-
-      .gv-demo-switcher {
-        position: fixed; bottom: 1rem; left: 1rem; z-index: 80;
-        background: rgba(36,34,30,0.9); color: var(--cream); padding: 0.5rem 0.7rem;
-        border-radius: 6px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem;
-      }
-      .gv-demo-switcher button {
-        background: none; border: 1px solid var(--gold-light); color: var(--cream);
-        padding: 0.25rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.72rem;
-      }
-      .gv-demo-switcher button.gv-demo-active { background: var(--gold); border-color: var(--gold); }
-    `}</style>
-  );
-}
-
-/* =========================================================================
-   ГЛОБАЛЬНЫЙ КОРНЕВОЙ КОМПОНЕНТ
-   ========================================================================= */
-
-export default function GrandVillaPortal() {
-  const [route, setRoute] = useState(() => parseRoute(window.location.pathname));
-  const [selectedRoom, setSelectedRoom] = useState(null); // { category, roomNumber } | null
-
-  useEffect(() => {
-    const onPopState = () => setRoute(parseRoute(window.location.pathname));
-    window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
-  }, []);
-
-  const goTo = (path) => {
-    window.history.pushState({}, '', path);
-    setRoute(parseRoute(path));
-  };
+  useEffect(() => { loadAvailability(); }, []);
 
   const handleSelectRoom = (room) => {
     setSelectedRoom(room);
@@ -1656,12 +1129,21 @@ export default function GrandVillaPortal() {
   };
 
   return (
-    <div className="gv-root">
-      <GlobalStyles />
+    <div className="font-sans antialiased text-stone-800 bg-amber-50/20 selection:bg-amber-500 selection:text-white">
       {route.mode === 'room' ? (
-        <RoomScreen roomNumber={route.roomNumber} onExit={() => goTo('/')} />
+        <RoomScreen roomNumber={route.roomNumber} onExit={() => window.history.pushState({}, '', '/')} />
       ) : (
-        <LandingPage onSelectRoom={handleSelectRoom} selectedRoom={selectedRoom} />
+        <main>
+          <Header onBookClick={() => handleSelectRoom({ category: selectedRoom?.category || 'standard', roomNumber: null })} />
+          <Hero onBookClick={() => handleSelectRoom({ category: selectedRoom?.category || 'standard', roomNumber: null })} />
+          <RoomsGrid onSelectRoom={handleSelectRoom} roomsAvailability={roomsAvailability} />
+          <BookingForm selectedRoom={selectedRoom} onBookingSuccess={(num) => {
+            setRoomsAvailability(prev => ({ ...prev, [num]: false }));
+            loadAvailability();
+          }} />
+          <Footer />
+          <WhatsAppWidget />
+        </main>
       )}
     </div>
   );
