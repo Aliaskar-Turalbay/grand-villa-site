@@ -254,9 +254,7 @@ function Hero({ onBookClick }) {
           <p className="gv-hero-subtitle">
             Премиальный отдых в самом сердце {HOTEL_CITY}а — в шаговой доступности от мавзолея Ходжи Ахмеда Ясави.
           </p>
-          <button onClick={onBookClick} className="gv-btn-gold">
-            Выбрать номер <ChevronRight size={18} />
-          </button>
+          
         </ArchFrame>
       </div>
     </section>
