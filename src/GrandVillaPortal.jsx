@@ -1,78 +1,97 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import {
   Menu, X, Phone, MapPin, ArrowLeft, Loader2, AlertCircle,
-  CheckCircle2, MessageCircle, Sparkles, Shirt, Bath, GlassWater, 
+  CheckCircle2, MessageCircle, Sparkles, Shirt, Bath, GlassWater,
   UtensilsCrossed, Plus, Minus
 } from 'lucide-react';
 
 /* =========================================================================
    ИНИЦИАЛИЗАЦИЯ SUPABASE
+   Ключи берутся ТОЛЬКО из env — без хардкод-заглушек в коде.
    ========================================================================= */
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://hbhzmfrihrgyjzahkenz.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    'Supabase env vars отсутствуют. Проверьте NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY в .env.local'
+  );
+}
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /* =========================================================================
-   КОНФИГУРАЦИЯ И ДАННЫЕ
+   КОНФИГУРАЦИЯ
    ========================================================================= */
 const WHATSAPP_NUMBER = '77770207773';
 const HOTEL_NAME = 'Grand Villa';
 const HOTEL_CITY = 'Туркестан';
 
-const ROOM_PRICES = {
-  standard: 20000,
-  deluxe: 30000,
-  family: 35000,
-};
+// Порядок и подписи типов — ЕДИНЫЕ с админкой (lib/format.js -> ROOM_TYPE_LABELS).
+// Значения ключей должны совпадать с полем `type` в таблице rooms.
+const TYPE_ORDER = ['standard', 'deluxe', 'suite'];
 
-const ROOMS_DATA = {
+const ROOM_TYPE_META = {
   standard: {
-    id: 'standard',
     title: 'Стандарт',
-    description: 'Уютные номера с классическим дизайном. Идеальный выбор для деловых поездок и комфортного отдыха в Туркестане.',
     icon: '🛏️',
-    price: 20000,
-    rooms: [
-      { id: '101', name: 'Номер 101', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор' },
-      { id: '102', name: 'Номер 102', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор' },
-      { id: '103', name: 'Номер 103', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор' },
-      { id: '104', name: 'Номер 104', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу' },
-      { id: '105', name: 'Номер 105', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор' },
-      { id: '106', name: 'Номер 106', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор' },
-      { id: '107', name: 'Номер 107', floor: 1, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор' },
-      { id: '108', name: 'Номер 108', floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор' },
-      { id: '203', name: 'Номер 203', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит во двор' },
-      { id: '204', name: 'Номер 204', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], price: 20000, isAvailable: true, windows: 'Окно выходит на улицу' }
-    ]
+    description: 'Уютные номера с классическим дизайном. Идеальный выбор для деловых поездок и комфортного отдыха в Туркестане.',
   },
   deluxe: {
-    id: 'deluxe',
     title: 'Делюкс',
-    description: 'Просторные номера повышенной комфортности. Отличный выбор для романтического отдыха и деловых поездок.',
     icon: '✨',
-    price: 30000,
-    rooms: [
-      { id: '202', name: 'Номер 202', floor: 2, bedType: 'Двуспальная кровать (180x200) + односпальная', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Панорамный вид' },
-      { id: '211', name: 'Номер 211', floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Два окна' },
-      { id: '302', name: 'Номер 302', floor: 3, bedType: 'Двуспальная кровать (180x200) + односпальная', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 30000, isAvailable: true, windows: 'Панорамный вид' }
-    ]
+    description: 'Просторные номера повышенной комфортности. Отличный выбор для романтического отдыха и деловых поездок.',
   },
-  family: {
-    id: 'family',
-    title: 'Семейный',
-    description: 'Просторные двухкомнатные номера для комфортного проживания всей семьёй.',
-    icon: '👨‍👩‍👧‍👦',
-    price: 35000,
-    rooms: [
-      { id: '201', name: 'Номер 201', floor: 2, bedType: 'Двуспальная кровать + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ', 'Детская кроватка'], price: 35000, isAvailable: true, windows: 'Панорамный вид' },
-      { id: '207', name: 'Номер 207', floor: 2, bedType: 'Двуспальная кровать + диван-кровать', capacity: 4, size: '42 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], price: 35000, isAvailable: true, windows: 'Окно выходит во двор' }
-    ]
-  }
+  suite: {
+    title: 'Люкс',
+    icon: '👑',
+    description: 'Просторные премиальные номера с максимальным комфортом для по-настоящему особенного отдыха.',
+  },
 };
+
+/* =========================================================================
+   ДЕКОРАТИВНЫЕ ДЕТАЛИ НОМЕРОВ
+   В таблице rooms Supabase сейчас нет колонок floor/bed_type/capacity/size/
+   amenities/windows — только room_number, type, price_per_night, is_active.
+   Поэтому эти визуальные детали пока остаются в коде, НО:
+   - они больше не содержат id/price/isAvailable (это приходит из базы);
+   - для новых номеров, которых нет в словаре ниже, есть запасной вариант
+     по типу (DEFAULT_DECOR_BY_TYPE), чтобы сайт не ломался при добавлении
+     номера в базу без правки этого файла.
+   Если захотите полностью убрать дублирование — можно добавить эти колонки
+   в таблицу rooms, тогда словарь ниже станет не нужен.
+   ========================================================================= */
+const ROOM_DECOR_BY_NUMBER = {
+  '101': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  '102': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  '103': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  '104': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит на улицу' },
+  '105': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  '106': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  '107': { floor: 1, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  '108': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  '203': { floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  '204': { floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит на улицу' },
+  '202': { floor: 2, bedType: 'Двуспальная кровать (180x200) + односпальная', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], windows: 'Панорамный вид' },
+  '211': { floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], windows: 'Два окна' },
+  '302': { floor: 3, bedType: 'Двуспальная кровать (180x200) + односпальная', capacity: 3, size: '32 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], windows: 'Панорамный вид' },
+  '201': { floor: 2, bedType: 'Двуспальная кровать + 2 односпальные', capacity: 4, size: '45 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ', 'Детская кроватка'], windows: 'Панорамный вид' },
+  '207': { floor: 2, bedType: 'Двуспальная кровать + диван-кровать', capacity: 4, size: '42 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], windows: 'Окно выходит во двор' },
+};
+
+const DEFAULT_DECOR_BY_TYPE = {
+  standard: { floor: 1, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
+  deluxe: { floor: 2, bedType: 'Двуспальная кровать (180x200)', capacity: 2, size: '30 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], windows: 'Панорамный вид' },
+  suite: { floor: 2, bedType: 'Двуспальная кровать + диван-кровать', capacity: 4, size: '42 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Душ'], windows: 'Панорамный вид' },
+};
+
+function getRoomDecor(room) {
+  return ROOM_DECOR_BY_NUMBER[room.room_number] || DEFAULT_DECOR_BY_TYPE[room.type] || DEFAULT_DECOR_BY_TYPE.standard;
+}
 
 const WIFI_PASSWORD = '12345678';
 const BREAKFAST_TIME = '08:00–10:00, ежедневно';
@@ -96,7 +115,7 @@ const FOOD_MENU = [
 ];
 
 function formatTenge(value) {
-  return `${value.toLocaleString('ru-RU')} ₸`;
+  return `${Number(value || 0).toLocaleString('ru-RU')} ₸`;
 }
 
 /* =========================================================================
@@ -133,7 +152,7 @@ function Toast({ toast, onClose }) {
 }
 
 /* =========================================================================
-   ОСНОВНЫЕ СЕКЦИИ СРАНИЦЫ
+   ОСНОВНЫЕ СЕКЦИИ СТРАНИЦЫ
    ========================================================================= */
 
 function Header({ onBookClick }) {
@@ -191,27 +210,28 @@ function Hero() {
   );
 }
 
-function RoomsGrid({ onSelectRoom, roomsAvailability }) {
+function RoomsGrid({ roomGroups, roomsLoading, onSelectRoom, roomsAvailability }) {
   const [expandedCategory, setExpandedCategory] = useState('standard');
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  const isRoomAvailable = (room) => {
-    if (roomsAvailability && Object.prototype.hasOwnProperty.call(roomsAvailability, room.id)) {
-      return roomsAvailability[room.id];
-    }
-    return room.isAvailable;
-  };
+  const isRoomAvailable = (room) => roomsAvailability[room.room_number] !== false;
 
   const handleBooking = (room) => {
-    let categoryId = 'standard';
-    if (['202', '211', '302', '307', '402', '411'].includes(room.id)) categoryId = 'deluxe';
-    else if (['201', '207', '209', '301', '308', '310', '401', '407', '409'].includes(room.id)) categoryId = 'family';
-
-    onSelectRoom({ category: categoryId, roomNumber: room.id });
+    onSelectRoom({ category: room.type, roomNumber: room.room_number });
     const el = document.getElementById('booking-form');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  if (roomsLoading) {
+    return (
+      <section id="rooms" className="gv-section gv-section-cream">
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem 0' }}>
+          <Loader2 size={28} className="gv-spin gv-stroke-gold" />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="rooms" className="gv-section gv-section-cream">
@@ -219,33 +239,36 @@ function RoomsGrid({ onSelectRoom, roomsAvailability }) {
       <h2 className="gv-section-title">Выберите идеальный номер</h2>
 
       <div className="gv-rooms-container">
-        {Object.values(ROOMS_DATA).map((category) => {
+        {roomGroups.map((category) => {
           const totalRooms = category.rooms.length;
           const availableRooms = category.rooms.filter((r) => isRoomAvailable(r)).length;
-          const isExpanded = expandedCategory === category.id;
+          const isExpanded = expandedCategory === category.type;
+          const meta = ROOM_TYPE_META[category.type] || { title: category.type, icon: '🏨', description: '' };
+          const minPrice = Math.min(...category.rooms.map((r) => Number(r.price_per_night) || 0));
 
           return (
-            <div key={category.id} className="gv-category-card">
-              <div className="gv-category-header" onClick={() => setExpandedCategory(isExpanded ? null : category.id)}>
+            <div key={category.type} className="gv-category-card">
+              <div className="gv-category-header" onClick={() => setExpandedCategory(isExpanded ? null : category.type)}>
                 <div className="gv-category-header-left">
-                  <span className="gv-category-icon">{category.icon}</span>
+                  <span className="gv-category-icon">{meta.icon}</span>
                   <div>
-                    <h3 className="gv-category-title">{category.title}</h3>
-                    <p className="gv-category-subtitle">{totalRooms} номеров • <strong style={{color: '#1E6B63'}}>{availableRooms} свободно</strong></p>
+                    <h3 className="gv-category-title">{meta.title}</h3>
+                    <p className="gv-category-subtitle">{totalRooms} номеров • <strong style={{ color: '#1E6B63' }}>{availableRooms} свободно</strong></p>
                   </div>
                 </div>
                 <div className="gv-category-price">
-                  от {formatTenge(category.rooms[0].price)}
+                  от {formatTenge(minPrice)}
                   <span className="gv-category-price-unit">/ночь</span>
                 </div>
               </div>
 
               {isExpanded && (
                 <div className="gv-rooms-list">
-                  <p className="gv-category-desc">{category.description}</p>
+                  <p className="gv-category-desc">{meta.description}</p>
                   <div className="gv-rooms-grid">
                     {category.rooms.map((room) => {
                       const available = isRoomAvailable(room);
+                      const decor = getRoomDecor(room);
                       return (
                         <div
                           key={room.id}
@@ -253,15 +276,15 @@ function RoomsGrid({ onSelectRoom, roomsAvailability }) {
                           onClick={() => { if (available) { setSelectedRoom(room); setShowDetails(true); } }}
                         >
                           <div className="gv-room-header">
-                            <span className="gv-room-number">{room.name}</span>
+                            <span className="gv-room-number">Номер {room.room_number}</span>
                             <span className={`gv-room-status ${available ? 'gv-room-available' : 'gv-room-occupied'}`}>
                               {available ? '🟢 Свободен' : '🔴 Занят'}
                             </span>
                           </div>
 
                           <div className="gv-room-details">
-                            <div className="gv-room-detail-item"><span>Этаж:</span><strong>{room.floor}</strong></div>
-                            <div className="gv-room-detail-item"><span>Спальное место:</span><strong>{room.bedType}</strong></div>
+                            <div className="gv-room-detail-item"><span>Этаж:</span><strong>{decor.floor}</strong></div>
+                            <div className="gv-room-detail-item"><span>Спальное место:</span><strong>{decor.bedType}</strong></div>
                           </div>
 
                           {available && (
@@ -287,8 +310,8 @@ function RoomsGrid({ onSelectRoom, roomsAvailability }) {
         <div className="gv-modal-backdrop" onClick={() => setShowDetails(false)}>
           <div className="gv-modal" onClick={(e) => e.stopPropagation()}>
             <button className="gv-modal-close" onClick={() => setShowDetails(false)}><X size={20} /></button>
-            <h3 style={{fontFamily: 'Cormorant Garamond, serif', fontSize: '1.6rem', margin: '0 0 0.5rem'}}>{selectedRoom.name}</h3>
-            <p style={{color: '#B8872F', fontWeight: 'bold', fontSize: '1.2rem'}}>{formatTenge(selectedRoom.price)} / ночь</p>
+            <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.6rem', margin: '0 0 0.5rem' }}>Номер {selectedRoom.room_number}</h3>
+            <p style={{ color: '#B8872F', fontWeight: 'bold', fontSize: '1.2rem' }}>{formatTenge(selectedRoom.price_per_night)} / ночь</p>
             <button className="gv-btn-gold" onClick={() => { setShowDetails(false); handleBooking(selectedRoom); }}>
               Забронировать этот номер
             </button>
@@ -299,7 +322,7 @@ function RoomsGrid({ onSelectRoom, roomsAvailability }) {
   );
 }
 
-function BookingForm({ selectedRoom, onBookingSuccess }) {
+function BookingForm({ selectedRoom, roomGroups, roomsAvailability, onBookingSuccess }) {
   const [form, setForm] = useState({
     name: '', phone: '', category: selectedRoom?.category || 'standard', checkIn: '', checkOut: ''
   });
@@ -337,39 +360,30 @@ function BookingForm({ selectedRoom, onBookingSuccess }) {
     setStatus('loading');
 
     try {
-      // 1. Ищем подходящий room_id из базы Supabase
-      let roomId = null;
+      // Ищем конкретный выбранный номер, либо любой свободный номер нужного типа —
+      // всё из реального списка комнат, загруженного из Supabase (без хардкода).
+      let targetRoom = null;
+      const groupForType = roomGroups.find((g) => g.type === form.category);
 
-      if (targetRoomNumber) {
-        const { data: targetRoom } = await supabase
-          .from('rooms')
-          .select('id')
-          .eq('room_number', targetRoomNumber)
-          .single();
-        if (targetRoom) roomId = targetRoom.id;
+      if (targetRoomNumber && groupForType) {
+        targetRoom = groupForType.rooms.find((r) => r.room_number === targetRoomNumber);
+      }
+      if (!targetRoom && groupForType) {
+        targetRoom = groupForType.rooms.find((r) => roomsAvailability[r.room_number] !== false);
       }
 
-      if (!roomId) {
-        // Подбираем любую свободна комнату выбранного типа
-        const { data: availableRooms } = await supabase
-          .from('rooms')
-          .select('id, room_number')
-          .eq('type', form.category)
-          .eq('is_active', true);
-
-        if (availableRooms && availableRooms.length > 0) {
-          roomId = availableRooms[0].id;
-        }
+      if (!targetRoom) {
+        setStatus('idle');
+        setErrorMsg('Свободных номеров этой категории сейчас нет. Выберите другую категорию.');
+        return;
       }
 
-      // 2. Считаем стоимость
       const days = Math.max(1, Math.ceil((new Date(form.checkOut) - new Date(form.checkIn)) / (1000 * 60 * 60 * 24)));
-      const totalPrice = (ROOM_PRICES[form.category] || 20000) * days;
+      const totalPrice = (Number(targetRoom.price_per_night) || 0) * days;
 
-      // 3. Прямая запись в Supabase
-      const { data, error } = await supabase.from('bookings').insert([
+      const { error } = await supabase.from('bookings').insert([
         {
-          room_id: roomId,
+          room_id: targetRoom.id,
           guest_name: form.name,
           guest_phone: form.phone,
           check_in: form.checkIn,
@@ -383,7 +397,7 @@ function BookingForm({ selectedRoom, onBookingSuccess }) {
       if (error) throw error;
 
       setStatus('success');
-      if (onBookingSuccess) onBookingSuccess(targetRoomNumber);
+      if (onBookingSuccess) onBookingSuccess(targetRoom.room_number);
     } catch (err) {
       console.error('Ошибка сохранения брони:', err);
       setStatus('error');
@@ -396,7 +410,7 @@ function BookingForm({ selectedRoom, onBookingSuccess }) {
       <section id="booking-form" className="gv-section gv-section-charcoal">
         <div className="gv-booking-success">
           <CheckCircle2 size={48} className="gv-stroke-gold" />
-          <h3 style={{fontSize: '1.8rem', margin: '0.8rem 0'}}>Бронирование отправлено!</h3>
+          <h3 style={{ fontSize: '1.8rem', margin: '0.8rem 0' }}>Бронирование отправлено!</h3>
           <p>Мы свяжемся с вами по номеру {form.phone} для подтверждения.</p>
           <button className="gv-btn-outline-light" onClick={() => setStatus('idle')}>Забронировать ещё</button>
         </div>
@@ -428,9 +442,15 @@ function BookingForm({ selectedRoom, onBookingSuccess }) {
             <label className="gv-field">
               <span>Категория</span>
               <select value={form.category} onChange={update('category')}>
-                <option value="standard">Стандарт — 20 000 ₸</option>
-                <option value="deluxe">Делюкс — 30 000 ₸</option>
-                <option value="family">Семейный — 35 000 ₸</option>
+                {roomGroups.map((g) => {
+                  const meta = ROOM_TYPE_META[g.type] || { title: g.type };
+                  const minPrice = Math.min(...g.rooms.map((r) => Number(r.price_per_night) || 0));
+                  return (
+                    <option key={g.type} value={g.type}>
+                      {meta.title} — от {formatTenge(minPrice)}
+                    </option>
+                  );
+                })}
               </select>
             </label>
 
@@ -473,8 +493,8 @@ function RoomScreen({ roomNumber, onExit }) {
       <div className="gv-room-inner">
         <ArchFrame>
           <p className="gv-eyebrow">{HOTEL_NAME}</p>
-          <h1 style={{fontFamily: 'Cormorant Garamond, serif', fontSize: '2rem', margin: '0 0 0.5rem'}}>Добро пожаловать в номер {roomNumber}!</h1>
-          <p style={{color: '#57514A', fontSize: '0.9rem'}}>Выберите услугу — мы приедем к вам в ближайшие минуты.</p>
+          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2rem', margin: '0 0 0.5rem' }}>Добро пожаловать в номер {roomNumber}!</h1>
+          <p style={{ color: '#57514A', fontSize: '0.9rem' }}>Выберите услугу — мы приедем к вам в ближайшие минуты.</p>
         </ArchFrame>
 
         <div className="gv-service-grid">
@@ -489,10 +509,10 @@ function RoomScreen({ roomNumber, onExit }) {
           })}
         </div>
 
-        <div style={{marginTop: '2rem', background: '#fff', padding: '1.2rem', borderRadius: '8px', border: '1px solid rgba(184,135,47,0.2)'}}>
-          <h3 style={{fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', margin: '0 0 0.8rem'}}>Информация</h3>
-          <p style={{fontSize: '0.85rem', margin: '0.4rem 0'}}><strong>Wi-Fi Пароль:</strong> {WIFI_PASSWORD}</p>
-          <p style={{fontSize: '0.85rem', margin: '0.4rem 0'}}><strong>Завтрак:</strong> {BREAKFAST_TIME}</p>
+        <div style={{ marginTop: '2rem', background: '#fff', padding: '1.2rem', borderRadius: '8px', border: '1px solid rgba(184,135,47,0.2)' }}>
+          <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', margin: '0 0 0.8rem' }}>Информация</h3>
+          <p style={{ fontSize: '0.85rem', margin: '0.4rem 0' }}><strong>Wi-Fi Пароль:</strong> {WIFI_PASSWORD}</p>
+          <p style={{ fontSize: '0.85rem', margin: '0.4rem 0' }}><strong>Завтрак:</strong> {BREAKFAST_TIME}</p>
         </div>
       </div>
 
@@ -519,7 +539,7 @@ function ConfirmModal({ service, roomNumber, onClose, onDone }) {
           room_number: roomNumber,
           service_type: service.type,
           details: comment,
-          status: 'pending'
+          status: 'new'
         }
       ]);
 
@@ -582,7 +602,7 @@ function FoodMenuModal({ roomNumber, onClose, onDone }) {
           service_type: 'еда',
           details: details,
           total_price: total,
-          status: 'pending'
+          status: 'new'
         }
       ]);
 
@@ -638,6 +658,9 @@ function parseRoute(pathname) {
 export default function GrandVillaPortal() {
   const [route, setRoute] = useState({ mode: 'landing', roomNumber: null });
   const [selectedRoom, setSelectedRoom] = useState(null);
+
+  const [rooms, setRooms] = useState([]);
+  const [roomsLoading, setRoomsLoading] = useState(true);
   const [roomsAvailability, setRoomsAvailability] = useState({});
 
   useEffect(() => {
@@ -649,31 +672,69 @@ export default function GrandVillaPortal() {
     }
   }, []);
 
-  // Загружаем занятость комнат НАПРЯМУЮ из Supabase
+  // Реальные номера — только из Supabase. Никакого хардкода списка/цены/типа.
+  const loadRooms = async () => {
+    setRoomsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('rooms')
+        .select('*')
+        .eq('is_active', true)
+        .order('room_number', { ascending: true });
+
+      if (error) throw error;
+      setRooms(data || []);
+    } catch (err) {
+      console.error('Ошибка загрузки номеров:', err);
+    } finally {
+      setRoomsLoading(false);
+    }
+  };
+
+  // Занятость номеров — по подтверждённым броням на сегодня.
   const loadAvailability = async () => {
     try {
-      const { data: bookingsData } = await supabase
+      const { data: bookingsData, error } = await supabase
         .from('bookings')
-        .select('room_id, rooms(room_number)')
+        .select('room_id, check_in, check_out, rooms(room_number)')
         .eq('status', 'confirmed');
 
-      if (bookingsData) {
-        const map = {};
-        bookingsData.forEach((b) => {
-          if (b.rooms?.room_number) {
-            map[b.rooms.room_number] = false; // Занята
-          }
-        });
-        setRoomsAvailability(map);
-      }
+      if (error) throw error;
+
+      const todayISO = new Date().toISOString().slice(0, 10);
+      const map = {};
+      (bookingsData || []).forEach((b) => {
+        if (b.rooms?.room_number && b.check_in <= todayISO && b.check_out > todayISO) {
+          map[b.rooms.room_number] = false; // Занята сегодня
+        }
+      });
+      setRoomsAvailability(map);
     } catch (err) {
       console.error('Ошибка загрузки занятости:', err);
     }
   };
 
   useEffect(() => {
+    loadRooms();
     loadAvailability();
   }, []);
+
+  // Группировка загруженных номеров по типу — в порядке TYPE_ORDER,
+  // остальные типы (если появятся новые) — в конце по алфавиту.
+  const roomGroups = useMemo(() => {
+    if (!rooms.length) return [];
+    const byType = {};
+    rooms.forEach((room) => {
+      const key = room.type || 'other';
+      if (!byType[key]) byType[key] = [];
+      byType[key].push(room);
+    });
+    const orderedKeys = [
+      ...TYPE_ORDER.filter((t) => byType[t]),
+      ...Object.keys(byType).filter((t) => !TYPE_ORDER.includes(t)).sort(),
+    ];
+    return orderedKeys.map((type) => ({ type, rooms: byType[type] }));
+  }, [rooms]);
 
   const handleSelectRoom = (room) => {
     setSelectedRoom(room);
@@ -689,11 +750,21 @@ export default function GrandVillaPortal() {
         <div className="gv-page">
           <Header onBookClick={() => handleSelectRoom({ category: selectedRoom?.category || 'standard', roomNumber: null })} />
           <Hero />
-          <RoomsGrid onSelectRoom={handleSelectRoom} roomsAvailability={roomsAvailability} />
-          <BookingForm selectedRoom={selectedRoom} onBookingSuccess={(num) => {
-            if (num) setRoomsAvailability(prev => ({ ...prev, [num]: false }));
-            loadAvailability();
-          }} />
+          <RoomsGrid
+            roomGroups={roomGroups}
+            roomsLoading={roomsLoading}
+            onSelectRoom={handleSelectRoom}
+            roomsAvailability={roomsAvailability}
+          />
+          <BookingForm
+            selectedRoom={selectedRoom}
+            roomGroups={roomGroups}
+            roomsAvailability={roomsAvailability}
+            onBookingSuccess={(num) => {
+              if (num) setRoomsAvailability((prev) => ({ ...prev, [num]: false }));
+              loadAvailability();
+            }}
+          />
         </div>
       )}
     </div>
