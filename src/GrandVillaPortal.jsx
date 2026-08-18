@@ -488,11 +488,28 @@ function RoomScreen({ roomNumber, onExit }) {
           })}
         </div>
 
-        <div style={{ marginTop: '2rem', background: '#fff', padding: '1.2rem', borderRadius: '8px', border: '1px solid rgba(184,135,47,0.2)' }}>
-          <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', margin: '0 0 0.8rem' }}>Информация</h3>
-          <p style={{ fontSize: '0.85rem', margin: '0.4rem 0' }}><strong>Wi-Fi Пароль:</strong> {WIFI_PASSWORD}</p>
-          <p style={{ fontSize: '0.85rem', margin: '0.4rem 0' }}><strong>Завтрак:</strong> {BREAKFAST_TIME}</p>
-        </div>
+        {/* НОВОЕ (в стиле общей тёмной темы) */}
+<div style={{
+  marginTop: '1.5rem',
+  background: '#131722',
+  padding: '1.25rem 1.5rem',
+  borderRadius: '1.25rem',
+  border: '1px solid #222736',
+  color: '#F3F4F6',
+  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)'
+}}>
+  <h3 style={{ fontFamily: 'Georgia, serif', fontSize: '1.2rem', margin: '0 0 0.75rem 0', color: '#F59E0B' }}>
+    Информация
+  </h3>
+  <p style={{ fontSize: '0.9rem', margin: '0.5rem 0', display: 'flex', justifyContent: 'space-between', color: '#9CA3AF' }}>
+    <span>Wi-Fi Пароль:</span>
+    <strong style={{ color: '#F59E0B', fontFamily: 'monospace', fontSize: '0.95rem' }}>{WIFI_PASSWORD}</strong>
+  </p>
+  <p style={{ fontSize: '0.9rem', margin: '0.5rem 0', display: 'flex', justifyContent: 'space-between', color: '#9CA3AF' }}>
+    <span>Завтрак:</span>
+    <strong style={{ color: '#F3F4F6' }}>{BREAKFAST_TIME}</strong>
+  </p>
+</div>
       </div>
 
       {activeService && activeService.type === 'еда' ? (
