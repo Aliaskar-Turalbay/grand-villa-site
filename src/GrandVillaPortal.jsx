@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import {
@@ -10,16 +8,13 @@ import {
 
 /* =========================================================================
    ИНИЦИАЛИЗАЦИЯ SUPABASE
-   Ключи берутся ТОЛЬКО из env — без хардкод-заглушек в коде.
    ========================================================================= */
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://hbhzmfrihrgyjzahkenz.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY';
 
 if (!supabaseUrl || !supabaseAnonKey) {
   // eslint-disable-next-line no-console
-  console.warn(
-    'Supabase env vars отсутствуют. Проверьте NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY в .env.local'
-  );
+  console.warn('Supabase env vars отсутствуют. Проверьте VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY в .env.local');
 }
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -31,8 +26,6 @@ const WHATSAPP_NUMBER = '77770207773';
 const HOTEL_NAME = 'Grand Villa';
 const HOTEL_CITY = 'Туркестан';
 
-// Порядок и подписи типов — ЕДИНЫЕ с админкой (lib/format.js -> ROOM_TYPE_LABELS).
-// Значения ключей должны совпадать с полем `type` в таблице rooms.
 const TYPE_ORDER = ['standard', 'deluxe', 'suite'];
 
 const ROOM_TYPE_META = {
@@ -53,18 +46,6 @@ const ROOM_TYPE_META = {
   },
 };
 
-/* =========================================================================
-   ДЕКОРАТИВНЫЕ ДЕТАЛИ НОМЕРОВ
-   В таблице rooms Supabase сейчас нет колонок floor/bed_type/capacity/size/
-   amenities/windows — только room_number, type, price_per_night, is_active.
-   Поэтому эти визуальные детали пока остаются в коде, НО:
-   - они больше не содержат id/price/isAvailable (это приходит из базы);
-   - для новых номеров, которых нет в словаре ниже, есть запасной вариант
-     по типу (DEFAULT_DECOR_BY_TYPE), чтобы сайт не ломался при добавлении
-     номера в базу без правки этого файла.
-   Если захотите полностью убрать дублирование — можно добавить эти колонки
-   в таблицу rooms, тогда словарь ниже станет не нужен.
-   ========================================================================= */
 const ROOM_DECOR_BY_NUMBER = {
   '101': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
   '102': { floor: 1, bedType: 'Две раздельные кровати (90x200)', capacity: 2, size: '22 м²', amenities: ['Wi-Fi', 'Кондиционер', 'Телевизор', 'Холодильник', 'Душ'], windows: 'Окно выходит во двор' },
@@ -360,8 +341,6 @@ function BookingForm({ selectedRoom, roomGroups, roomsAvailability, onBookingSuc
     setStatus('loading');
 
     try {
-      // Ищем конкретный выбранный номер, либо любой свободный номер нужного типа —
-      // всё из реального списка комнат, загруженного из Supabase (без хардкода).
       let targetRoom = null;
       const groupForType = roomGroups.find((g) => g.type === form.category);
 
@@ -531,6 +510,7 @@ function ConfirmModal({ service, roomNumber, onClose, onDone }) {
   const [comment, setComment] = useState('');
   const [status, setStatus] = useState('idle');
 
+  // ПРЯМАЯ ОТПРАВКА В SUPABASE БЕЗ ВНЕШНИХ API/RAILWAY
   const handleConfirm = async () => {
     setStatus('loading');
     try {
@@ -538,8 +518,8 @@ function ConfirmModal({ service, roomNumber, onClose, onDone }) {
         {
           room_number: roomNumber,
           service_type: service.type,
-          details: comment,
-          status: 'new'
+          details: comment || 'Без комментария',
+          status: 'pending'
         }
       ]);
 
@@ -548,6 +528,7 @@ function ConfirmModal({ service, roomNumber, onClose, onDone }) {
     } catch (err) {
       console.error('Ошибка заказа услуги:', err);
       setStatus('error');
+      onDone({ type: 'error', message: 'Ошибка при отправке запроса.' });
     }
   };
 
@@ -586,6 +567,7 @@ function FoodMenuModal({ roomNumber, onClose, onDone }) {
     return sum + (item ? item.price * qty : 0);
   }, 0);
 
+  // ПРЯМАЯ ОТПРАВКА ЕДЫ В SUPABASE
   const handleConfirm = async () => {
     if (total === 0) return;
     setStatus('loading');
@@ -602,15 +584,16 @@ function FoodMenuModal({ roomNumber, onClose, onDone }) {
           service_type: 'еда',
           details: details,
           total_price: total,
-          status: 'new'
+          status: 'pending'
         }
       ]);
 
       if (error) throw error;
-      onDone({ type: 'success', message: 'Заказ успешно отправлен!' });
+      onDone({ type: 'success', message: 'Заказ еды успешно отправлен!' });
     } catch (err) {
       console.error('Ошибка заказа еды:', err);
       setStatus('error');
+      onDone({ type: 'error', message: 'Не удалось оформить заказ еды.' });
     }
   };
 
@@ -672,7 +655,6 @@ export default function GrandVillaPortal() {
     }
   }, []);
 
-  // Реальные номера — только из Supabase. Никакого хардкода списка/цены/типа.
   const loadRooms = async () => {
     setRoomsLoading(true);
     try {
@@ -691,7 +673,6 @@ export default function GrandVillaPortal() {
     }
   };
 
-  // Занятость номеров — по подтверждённым броням на сегодня.
   const loadAvailability = async () => {
     try {
       const { data: bookingsData, error } = await supabase
@@ -705,7 +686,7 @@ export default function GrandVillaPortal() {
       const map = {};
       (bookingsData || []).forEach((b) => {
         if (b.rooms?.room_number && b.check_in <= todayISO && b.check_out > todayISO) {
-          map[b.rooms.room_number] = false; // Занята сегодня
+          map[b.rooms.room_number] = false;
         }
       });
       setRoomsAvailability(map);
@@ -719,8 +700,6 @@ export default function GrandVillaPortal() {
     loadAvailability();
   }, []);
 
-  // Группировка загруженных номеров по типу — в порядке TYPE_ORDER,
-  // остальные типы (если появятся новые) — в конце по алфавиту.
   const roomGroups = useMemo(() => {
     if (!rooms.length) return [];
     const byType = {};
